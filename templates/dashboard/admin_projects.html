@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Projects Manager - SAHAL Admin{% endblock %}
+{% block content %}
+<div class="p-6 md:p-8">
+    <div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div><h1 class="font-heading text-3xl font-bold text-gray-900">Sahal Projects</h1><p class="text-gray-600 mt-1">Manage the images and copy shown on the public <a href="{{ url_for('sahal_projects') }}" target="_blank" class="text-sahal-blue hover:underline">Projects</a> page.</p></div>
+        <div class="flex items-center gap-3"><a href="{{ url_for('admin_project_new') }}" class="bg-sahal-blue text-white px-4 py-2 rounded-lg font-subheading font-semibold text-sm hover:bg-sahal-navy transition inline-flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> Add Project</a><a href="{{ url_for('admin_dashboard') }}" class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm inline-flex items-center gap-1"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard</a></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-gray-50 border-b border-gray-200"><tr><th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Image</th><th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Project</th><th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Category</th><th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500 text-right">Actions</th></tr></thead><tbody class="divide-y divide-gray-100">
+        {% for project in projects %}<tr class="hover:bg-gray-50"><td class="px-6 py-3">{% if project.image %}<img src="{{ url_for('static', filename=project.image) }}" alt="{{ project.title }}" class="w-16 h-12 rounded-lg object-cover border border-gray-200">{% else %}<div class="w-16 h-12 rounded-lg bg-sahal-cream flex items-center justify-center"><i data-lucide="image" class="w-5 h-5 text-sahal-navy/50"></i></div>{% endif %}</td><td class="px-6 py-3"><p class="font-subheading font-semibold text-gray-900">{{ project.title }}</p><p class="text-xs text-gray-500 line-clamp-1">{{ project.summary }}</p></td><td class="px-6 py-3 text-sm text-gray-600">{{ project.category }}</td><td class="px-6 py-3 text-right whitespace-nowrap"><a href="{{ url_for('admin_project_edit', project_id=project.id) }}" class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm mr-3">Edit</a><form method="POST" action="{{ url_for('admin_project_delete', project_id=project.id) }}" class="inline project-delete-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="button" data-project-title="{{ project.title }}" class="project-delete-trigger text-red-600 hover:text-red-800 font-subheading font-semibold text-sm">Delete</button></form></td></tr>{% else %}<tr><td colspan="4" class="px-6 py-10 text-center text-gray-500">No portfolio projects yet. Add the first one to publish it on the Sahal Projects page.</td></tr>{% endfor %}
+    </tbody></table></div></div>
+</div>
+<div id="project-delete-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="project-delete-title" aria-describedby="project-delete-message">
+    <div class="absolute inset-0 bg-sahal-navy/60 backdrop-blur-sm" data-project-delete-cancel></div>
+    <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl shadow-sahal-navy/30">
+        <div class="flex items-start gap-4">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600"><i data-lucide="trash-2" class="w-6 h-6"></i></div>
+            <div>
+                <h2 id="project-delete-title" class="font-heading text-2xl font-bold text-sahal-navy">Remove project?</h2>
+                <p id="project-delete-message" class="mt-2 text-sm leading-6 text-gray-600">This will remove <span id="project-delete-name" class="font-subheading font-semibold text-gray-900"></span> from the public Projects page. This action cannot be undone.</p>
+            </div>
+        </div>
+        <div class="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button type="button" data-project-delete-cancel class="inline-flex items-center justify-center rounded-lg border border-gray-300 px-4 py-2.5 font-subheading text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Keep Project</button>
+            <button type="button" id="project-delete-confirm" class="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 font-subheading text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-200 transition"><i data-lucide="trash-2" class="w-4 h-4"></i> Remove Project</button>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('project-delete-modal');
+    const projectName = document.getElementById('project-delete-name');
+    const confirmButton = document.getElementById('project-delete-confirm');
+    let selectedForm = null;
+    let triggerButton = null;
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        if (triggerButton) triggerButton.focus();
+        selectedForm = null;
+    }
+
+    document.querySelectorAll('.project-delete-trigger').forEach(function (button) {
+        button.addEventListener('click', function () {
+            selectedForm = button.closest('form');
+            triggerButton = button;
+            projectName.textContent = button.dataset.projectTitle;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            confirmButton.focus();
+        });
+    });
+
+    document.querySelectorAll('[data-project-delete-cancel]').forEach(function (button) {
+        button.addEventListener('click', closeModal);
+    });
+    confirmButton.addEventListener('click', function () {
+        if (selectedForm) selectedForm.submit();
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+    });
+});
+</script>
+{% endblock %}

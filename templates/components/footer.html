@@ -1,0 +1,98 @@
+<!-- Footer Component -->
+{% if is_sahal_site %}
+<footer class="bg-sahal-navy text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="md:col-span-2">
+                {% with on_dark=true, size='lg', alt='Sahal Branding Agency' %}{% include 'components/logo.html' %}{% endwith %}
+                <p class="text-blue-100 text-sm max-w-md mt-5">Strategic branding, design, print, signage, and event identity systems for businesses that need to look established and move quickly.</p>
+            </div>
+            <div>
+                <h4 class="font-subheading font-semibold mb-4">Studio</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/sahal/projects" class="text-blue-100 hover:text-sahal-yellow transition">Projects</a></li>
+                    <li><a href="/sahal/designs" class="text-blue-100 hover:text-sahal-yellow transition">Designs</a></li>
+                    <li><a href="/sahal/events" class="text-blue-100 hover:text-sahal-yellow transition">Events</a></li>
+                    <li><a href="/sahal/about" class="text-blue-100 hover:text-sahal-yellow transition">About</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-subheading font-semibold mb-4">Start</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/sahal/contact" class="text-blue-100 hover:text-sahal-yellow transition">Request a quote</a></li>
+                    <li><a href="/catalog" class="text-blue-100 hover:text-sahal-yellow transition">Browse products</a></li>
+                    <li><a href="/" class="text-blue-100 hover:text-sahal-yellow transition">Back to apps</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-3 text-blue-100 text-sm">
+            <p>&copy; 2026 Sahal Branding Agency. All rights reserved.</p>
+            <p>Brand systems, print production, and event visibility.</p>
+        </div>
+    </div>
+</footer>
+{% else %}
+<footer class="bg-sahal-navy text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <!-- Company Info -->
+            <div>
+                {% with on_dark=true %}{% include 'components/logo.html' %}{% endwith %}
+                <p class="text-blue-200 text-sm mb-4 mt-4">Your trusted partner for talent, products, and enterprise solutions.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-blue-200 hover:text-sahal-yellow transition">
+                        <i data-lucide="facebook" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="text-blue-200 hover:text-sahal-yellow transition">
+                        <i data-lucide="twitter" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="text-blue-200 hover:text-sahal-yellow transition">
+                        <i data-lucide="linkedin" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div>
+                <h4 class="font-subheading font-semibold mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/" class="text-blue-200 hover:text-sahal-yellow transition">Home</a></li>
+                    <li><a href="/talent" class="text-blue-200 hover:text-sahal-yellow transition">Talent</a></li>
+                    <li><a href="/catalog" class="text-blue-200 hover:text-sahal-yellow transition">Products</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Services</a></li>
+                </ul>
+            </div>
+            
+            <!-- Support -->
+            <div>
+                <h4 class="font-subheading font-semibold mb-4">Support</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Help Center</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Contact Us</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">FAQ</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Documentation</a></li>
+                </ul>
+            </div>
+            
+            <!-- Legal -->
+            <div>
+                <h4 class="font-subheading font-semibold mb-4">Legal</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Privacy Policy</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Terms of Service</a></li>
+                    <li><a href="#" class="text-blue-200 hover:text-sahal-yellow transition">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Divider -->
+        <hr class="border-white/10 mb-8">
+        
+        <!-- Bottom -->
+        <div class="flex flex-col md:flex-row justify-between items-center text-blue-200 text-sm">
+            <p>&copy; 2024 SAHAL System. All rights reserved.</p>
+            <p>Made with <span class="text-sahal-yellow">❤</span> for Enterprise Excellence</p>
+        </div>
+    </div>
+</footer>
+{% endif %}

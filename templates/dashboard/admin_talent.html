@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Talent Management - SAHAL Admin{% endblock %}
+
+{% block content %}
+<div class="p-6 md:p-8">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="font-heading text-3xl font-bold text-gray-900">Talent Agency Profiles</h1>
+            <p class="text-gray-600 mt-1">Manage everything shown on the public <a href="/talent" target="_blank" class="text-sahal-blue hover:underline">Talent Agency</a> directory.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('admin_talent_new') }}" class="bg-sahal-blue text-white px-4 py-2 rounded-lg font-subheading font-semibold text-sm hover:bg-sahal-navy transition inline-flex items-center gap-2">
+                <i data-lucide="user-plus" class="w-4 h-4"></i> Add Talent
+            </a>
+            <a href="/dashboard/admin" class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm inline-flex items-center gap-1">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar">
+        <a href="{{ url_for('admin_talent', category='all') }}"
+           class="shrink-0 px-4 py-2 rounded-full text-sm font-subheading font-semibold transition
+                  {% if active_category == 'all' %}bg-sahal-blue text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+            All
+        </a>
+        {% for cat in categories %}
+        <a href="{{ url_for('admin_talent', category=cat) }}"
+           class="shrink-0 px-4 py-2 rounded-full text-sm font-subheading font-semibold transition
+                  {% if active_category == cat %}bg-sahal-blue text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+            {{ cat }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Talent Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Photo</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Name</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Category</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Rating</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Followers</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Status</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for t in talents %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-3">
+                        {% if t.photo_url %}
+                        <img src="{{ t.photo_url }}" alt="{{ t.name }}" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                        {% else %}
+                        <div class="w-10 h-10 rounded-full bg-sahal-cream flex items-center justify-center">
+                            <i data-lucide="user-round" class="w-5 h-5 text-sahal-navy opacity-50"></i>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-3">
+                        <p class="font-subheading font-semibold text-gray-900">{{ t.name }}</p>
+                        {% if t.featured %}<span class="text-[10px] font-bold uppercase tracking-wide text-sahal-navy bg-sahal-yellow px-2 py-0.5 rounded-full">Featured</span>{% endif %}
+                    </td>
+                    <td class="px-6 py-3 text-sm text-gray-600">{{ t.category }}</td>
+                    <td class="px-6 py-3 text-sm font-semibold text-sahal-blue">{{ '%.1f'|format(t.rating) }} <span class="text-gray-400 font-normal">({{ t.reviews }})</span></td>
+                    <td class="px-6 py-3 text-sm text-gray-600">{{ t.followers }}</td>
+                    <td class="px-6 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-subheading font-semibold {% if t.is_active %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+                            {{ 'Active' if t.is_active else 'Hidden' }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-3 text-right whitespace-nowrap">
+                        <a href="{{ url_for('admin_talent_edit', talent_id=t.id) }}"
+                           class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm mr-3">Edit</a>
+                        <form method="POST" action="{{ url_for('admin_talent_delete', talent_id=t.id) }}"
+                              class="inline" onsubmit="return confirm('Delete this talent profile?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="text-red-600 hover:text-red-800 font-subheading font-semibold text-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">No talent profiles found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

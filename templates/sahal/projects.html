@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects - Sahal Branding Agency{% endblock %}
+
+{% block content %}
+<section class="sahal-page-hero text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div>
+            <p class="text-sm font-subheading font-bold uppercase tracking-wide text-sahal-yellow">Selected work</p>
+            <h1 class="font-heading text-4xl md:text-5xl font-bold mt-2 mb-3">A visual portfolio built from real Sahal work.</h1>
+            <p class="text-blue-100 max-w-2xl">Brand identity, photography, layouts, print material, signage, and campaign visuals pulled from the studio portfolio archive.</p>
+        </div>
+        {% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+    </div>
+</section>
+
+{% set featured = projects[0] if projects else none %}
+{% if featured %}
+<section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-[1.2fr_.8fr] gap-8 items-stretch">
+            <button type="button" class="sahal-featured-project group text-left" data-project-trigger data-project-number="{{ '%02d'|format(featured.id) }}" data-project-title="{{ featured.title }}" data-project-category="{{ featured.category }}" data-project-summary="{{ featured.summary }}" data-project-image="{{ url_for('static', filename=featured.image) if featured.image else '' }}">
+                {% if featured.image %}
+                <img src="{{ url_for('static', filename=featured.image) }}" alt="{{ featured.title }}" class="w-full h-full object-cover group-hover:scale-[1.02] transition duration-500">
+                {% else %}
+                <div class="h-full min-h-[420px] bg-sahal-navy flex items-center justify-center">
+                    {% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+                </div>
+                {% endif %}
+            </button>
+            <div class="sahal-card p-8 flex flex-col justify-between">
+                <div>
+                    <p class="text-sm font-subheading font-bold uppercase tracking-wide text-sahal-blue">Portfolio archive</p>
+                    <h2 class="font-heading text-4xl font-bold text-gray-950 mt-3">Complete project gallery</h2>
+                    <p class="text-gray-600 mt-4">The portfolio PDF has been converted into a fast web gallery so each project page can be browsed directly in the Sahal site.</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <div class="rounded-lg bg-sahal-cream p-5">
+                        <p class="font-heading text-4xl font-bold text-sahal-blue">{{ projects|length }}</p>
+                        <p class="text-sm text-sahal-navy/70">Portfolio pages</p>
+                    </div>
+                    <div class="rounded-lg bg-sahal-navy p-5">
+                        <p class="font-heading text-4xl font-bold text-sahal-yellow">Web</p>
+                        <p class="text-sm text-blue-100">Optimized gallery</p>
+                    </div>
+                </div>
+                <a href="/sahal/contact" class="mt-8 inline-flex justify-center bg-sahal-yellow text-sahal-navy px-6 py-3 rounded-lg font-subheading font-bold hover:brightness-95 transition">Start a similar project</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-8">
+            <div>
+                <p class="text-sm font-subheading font-bold uppercase tracking-wide text-sahal-blue">Gallery</p>
+                <h2 class="font-heading text-3xl md:text-4xl font-bold text-gray-950 mt-2">Browse the work</h2>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <span class="rounded-full bg-white border border-gray-200 px-4 py-2 text-sm font-subheading font-semibold text-gray-700">Brand Identity</span>
+                <span class="rounded-full bg-white border border-gray-200 px-4 py-2 text-sm font-subheading font-semibold text-gray-700">Photography</span>
+                <span class="rounded-full bg-white border border-gray-200 px-4 py-2 text-sm font-subheading font-semibold text-gray-700">Print</span>
+                <span class="rounded-full bg-white border border-gray-200 px-4 py-2 text-sm font-subheading font-semibold text-gray-700">Campaigns</span>
+            </div>
+        </div>
+
+        <div class="sahal-project-grid">
+            {% for project in projects %}
+            <button type="button" class="sahal-project-card group text-left" data-project-trigger data-project-number="{{ '%02d'|format(project.id) }}" data-project-title="{{ project.title }}" data-project-category="{{ project.category }}" data-project-summary="{{ project.summary }}" data-project-image="{{ url_for('static', filename=project.image) if project.image else '' }}">
+                <div class="sahal-project-image">
+                    {% if project.image %}
+                    <img src="{{ url_for('static', filename=project.image) }}" alt="{{ project.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-[1.025] transition duration-500">
+                    {% else %}
+                    <div class="h-full bg-sahal-navy flex items-center justify-center">
+                        {% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-5">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-xs font-subheading font-semibold uppercase tracking-wide text-sahal-blue">{{ project.category }}</span>
+                        <span class="text-xs text-gray-400">No. {{ '%02d'|format(project.id) }}</span>
+                    </div>
+                    <h3 class="font-subheading font-bold text-gray-900 mt-2">{{ project.title }}</h3>
+                    <p class="text-sm text-gray-500 mt-2">{{ (project.summary or 'Portfolio work from the Sahal studio.')|truncate(50, True, '...', 0) }}</p>
+                </div>
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div id="project-viewer" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="project-viewer-title" aria-describedby="project-viewer-summary">
+    <div class="absolute inset-0 bg-sahal-navy/80 backdrop-blur-sm" data-project-viewer-close></div>
+    <div class="relative grid max-h-[calc(100vh-1.5rem)] w-full max-w-6xl overflow-y-auto rounded-lg bg-white shadow-2xl shadow-sahal-navy/50 md:max-h-[min(760px,calc(100vh-3rem))] md:grid-cols-[minmax(0,1.28fr)_minmax(340px,.72fr)] md:overflow-hidden">
+        <figure class="relative flex min-h-[300px] items-center justify-center overflow-hidden bg-sahal-navy sm:min-h-[420px] md:min-h-0">
+            <img id="project-viewer-image" src="" alt="" class="h-full w-full object-contain" hidden>
+            <div id="project-viewer-placeholder" class="flex h-full w-full items-center justify-center">{% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}</div>
+        </figure>
+        <article class="relative flex min-h-[360px] flex-col bg-white p-6 sm:p-8">
+            <button type="button" data-project-viewer-close class="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:border-sahal-blue hover:bg-blue-50 hover:text-sahal-blue focus:outline-none focus:ring-4 focus:ring-sahal-blue/15" aria-label="Close project details" title="Close project details"><i data-lucide="x" class="h-5 w-5"></i></button>
+            <div class="border-b border-gray-100 pb-6 pr-12">
+                <p class="text-xs font-subheading font-bold uppercase tracking-[0.16em] text-sahal-blue">Project details</p>
+                <p id="project-viewer-category" class="mt-4 inline-flex rounded-full bg-sahal-cream px-3 py-1.5 text-xs font-subheading font-bold text-sahal-navy"></p>
+                <h2 id="project-viewer-title" class="font-heading mt-4 text-3xl font-bold leading-tight text-gray-950 sm:text-4xl"></h2>
+            </div>
+            <div class="flex-1 py-6">
+                <div class="flex items-center gap-3 text-sm text-gray-500"><span class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-sahal-blue"><i data-lucide="layers-3" class="h-4 w-4"></i></span><div><p class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Portfolio project</p><p id="project-viewer-number" class="mt-0.5 font-subheading font-bold text-gray-700"></p></div></div>
+                <div class="mt-7"><p class="text-xs font-subheading font-bold uppercase tracking-[0.16em] text-gray-400">Overview</p><p id="project-viewer-summary" class="mt-3 text-sm leading-7 text-gray-600 sm:text-base"></p></div>
+            </div>
+            <div class="border-t border-gray-100 pt-5"><a href="/sahal/contact" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sahal-blue px-5 py-3 text-sm font-subheading font-bold text-white transition hover:bg-sahal-navy"><i data-lucide="arrow-up-right" class="h-4 w-4"></i> Start a similar project</a></div>
+        </article>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const viewer = document.getElementById('project-viewer');
+    const image = document.getElementById('project-viewer-image');
+    const placeholder = document.getElementById('project-viewer-placeholder');
+    const title = document.getElementById('project-viewer-title');
+    const category = document.getElementById('project-viewer-category');
+    const projectNumber = document.getElementById('project-viewer-number');
+    const summary = document.getElementById('project-viewer-summary');
+    const closeButton = viewer.querySelector('button[data-project-viewer-close]');
+    let lastTrigger = null;
+
+    function closeViewer() {
+        viewer.classList.add('hidden');
+        viewer.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+        if (lastTrigger) lastTrigger.focus();
+    }
+
+    document.querySelectorAll('[data-project-trigger]').forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+            lastTrigger = trigger;
+            title.textContent = trigger.dataset.projectTitle;
+            category.textContent = trigger.dataset.projectCategory;
+            projectNumber.textContent = `Project No. ${trigger.dataset.projectNumber || '--'}`;
+            summary.textContent = trigger.dataset.projectSummary;
+            image.alt = trigger.dataset.projectTitle;
+            const hasImage = Boolean(trigger.dataset.projectImage);
+            image.style.display = hasImage ? 'block' : 'none';
+            placeholder.style.display = hasImage ? 'none' : 'flex';
+            image.src = hasImage ? trigger.dataset.projectImage : '';
+            viewer.classList.remove('hidden');
+            viewer.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+            closeButton.focus();
+        });
+    });
+
+    viewer.querySelectorAll('[data-project-viewer-close]').forEach(function (element) {
+        element.addEventListener('click', closeViewer);
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !viewer.classList.contains('hidden')) closeViewer();
+    });
+});
+</script>
+{% endblock %}

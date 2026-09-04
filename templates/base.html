@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" class="{% if user.theme_preference == 'dark' %}dark{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}SAHAL System - Enterprise Solutions{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Brand Fonts: Outfit (headings), Montserrat (subheadings), Lato (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&family=Outfit:wght@400;600;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Tailwind Brand Theme -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'sahal-blue': '#003399',
+                        'sahal-navy': '#002766',
+                        'sahal-yellow': '#FFCC00',
+                        'sahal-cream': '#FFF4C5',
+                    },
+                    fontFamily: {
+                        heading: ['Outfit', 'sans-serif'],
+                        subheading: ['Montserrat', 'sans-serif'],
+                        body: ['Lato', 'sans-serif'],
+                        sans: ['Lato', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+    
+    <!-- Lucide Icons CDN -->
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900{% if is_sahal_site %} sahal-site{% endif %}">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-region" class="pointer-events-none fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 px-4" aria-live="polite">
+        {% for category, message in messages %}
+        <div data-flash-toast role="alert" class="pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-lg border px-4 py-3 shadow-xl transition duration-300 {% if category == 'success' %}border-green-200 bg-green-50 text-green-900{% elif category == 'error' %}border-red-200 bg-red-50 text-red-900{% elif category == 'info' %}border-blue-200 bg-blue-50 text-blue-900{% else %}border-sahal-navy bg-sahal-navy text-white{% endif %}">
+            <i data-lucide="{% if category == 'success' %}circle-check{% elif category == 'error' %}circle-x{% else %}info{% endif %}" class="mt-0.5 h-5 w-5 shrink-0"></i><p class="flex-1 text-sm font-subheading font-semibold leading-5">{{ message }}</p><button type="button" data-flash-dismiss aria-label="Dismiss notification" class="-mr-1 -mt-1 rounded-lg p-1 opacity-70 transition hover:bg-black/10 hover:opacity-100"><i data-lucide="x" class="h-4 w-4"></i></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div id="global-page-loader" class="pointer-events-auto fixed inset-0 z-[90] hidden items-center justify-center bg-sahal-navy/20" role="status" aria-live="polite" aria-label="Processing request">
+        <div class="flex items-center gap-3 rounded-lg bg-white px-5 py-4 text-sm font-subheading font-bold text-sahal-navy shadow-xl"><span class="h-5 w-5 animate-spin rounded-full border-2 border-sahal-blue border-t-transparent"></span> Processing</div>
+    </div>
+
+    <!-- Page Wrapper with Dynamic Layout -->
+    <div x-data="{ sidebarOpen: true, isMobile: window.innerWidth < 768 }" class="{% if is_dashboard %}h-screen overflow-hidden{% else %}min-h-screen{% endif %}">
+        
+        <!-- Dashboard Layout (for authenticated pages) -->
+        {% if is_dashboard %}
+            <div class="flex h-full overflow-hidden">
+                <!-- Sidebar -->
+                {% include 'components/sidebar.html' %}
+                
+                <!-- Main Content Area -->
+                <div class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                    <!-- Navbar -->
+                    {% include 'components/navbar.html' %}
+                    
+                    <!-- Page Content -->
+                    <main class="flex-1 min-h-0 overflow-auto no-scrollbar bg-gray-50">
+                        {% block content %}{% endblock %}
+                    </main>
+                </div>
+            </div>
+        
+        <!-- Public Layout (for public-facing pages) -->
+        {% else %}
+            <div class="flex flex-col min-h-screen">
+                <div class="bg-sahal-navy text-blue-50">
+                    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-5 gap-y-1 px-4 py-1.5 text-xs sm:justify-between sm:px-6 lg:px-8">
+                        <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 sm:justify-start">
+                            <a href="tel:+252634171636" class="inline-flex items-center gap-1.5 transition hover:text-sahal-yellow" aria-label="Call SAHAL Branding Agency at +252 63 4171636"><i data-lucide="phone" class="h-3.5 w-3.5"></i><span>+252 63 4171636</span></a>
+                            <a href="mailto:info@sahalbrandingagency.com" class="inline-flex items-center gap-1.5 transition hover:text-sahal-yellow" aria-label="Email SAHAL Branding Agency"><i data-lucide="mail" class="h-3.5 w-3.5"></i><span>info@sahalbrandingagency.com</span></a>
+                        </div>
+                        <p class="whitespace-nowrap text-blue-100">Welcome {{ user.name if user.is_authenticated else 'Guest' }}</p>
+                    </div>
+                </div>
+                <!-- Public Navbar -->
+                {% include 'components/navbar.html' %}
+                
+                <!-- Page Content -->
+                <main class="flex-1">
+                    {{ self.content() }}
+                </main>
+                
+                <!-- Footer -->
+                {% include 'components/footer.html' %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Script Initialization -->
+    <script>
+        (() => {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('form[method="post" i]').forEach(form => {
+                    if (form.querySelector('input[name="csrf_token"]')) return;
+                    const tokenField = document.createElement('input');
+                    tokenField.type = 'hidden';
+                    tokenField.name = 'csrf_token';
+                    tokenField.value = csrfToken;
+                    form.prepend(tokenField);
+                });
+            });
+
+            const nativeFetch = window.fetch.bind(window);
+            window.fetch = (input, init = {}) => {
+                const url = new URL(typeof input === 'string' ? input : input.url, window.location.origin);
+                const method = (init.method || (typeof input === 'string' ? 'GET' : input.method) || 'GET').toUpperCase();
+                if (url.origin === window.location.origin && !['GET', 'HEAD', 'OPTIONS'].includes(method) && csrfToken) {
+                    const headers = new Headers(init.headers || (typeof input === 'string' ? undefined : input.headers));
+                    headers.set('X-CSRFToken', csrfToken);
+                    init = { ...init, headers };
+                }
+                return nativeFetch(input, init);
+            };
+        })();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+
+            window.addEventListener('resize', () => {
+                const appShell = document.querySelector('[x-data]');
+                if (appShell?.__x) appShell.__x.$data.isMobile = window.innerWidth < 768;
+            });
+        });
+    </script>
+    
+    <!-- Custom Scripts -->
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+
+    {% if is_dashboard and user.is_authenticated %}
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+    <script>
+        (() => {
+            const badge = document.getElementById('sidebar-unread-count');
+            const updateUnreadBadge = totalUnread => {
+                if (!badge) return;
+                badge.textContent = totalUnread > 99 ? '99+' : totalUnread;
+                badge.classList.toggle('hidden', totalUnread === 0);
+            };
+            // Werkzeug on local Windows development does not reliably support Socket.IO WebSocket upgrades.
+            // Engine.IO polling still delivers server-pushed chat events without repeated failed upgrades.
+            window.sahalChatSocket = io({ transports: ['polling'], upgrade: false });
+            window.sahalChatSocket.on('chat:unread-count', payload => updateUnreadBadge(payload.total_unread || 0));
+        })();
+    </script>
+    {% endif %}
+    
+    {% block extra_js %}{% endblock %}
+    <script>
+        (() => {
+            const loader = document.getElementById('global-page-loader');
+            let loaderTimer;
+            const showLoader = () => { if (loader) { loader.classList.remove('hidden'); loader.classList.add('flex'); } };
+            const hideLoader = () => { window.clearTimeout(loaderTimer); if (loader) { loader.classList.add('hidden'); loader.classList.remove('flex'); } };
+            window.showSahalLoader = () => { window.clearTimeout(loaderTimer); showLoader(); };
+            window.hideSahalLoader = hideLoader;
+
+            document.addEventListener('submit', event => {
+                const form = event.target;
+                if (event.defaultPrevented || !form || form.dataset.noLoader !== undefined || form.target === '_blank') return;
+                window.clearTimeout(loaderTimer);
+                loaderTimer = window.setTimeout(showLoader, 300);
+            });
+            window.addEventListener('pageshow', hideLoader);
+
+            document.querySelectorAll('[data-flash-toast]').forEach(toast => {
+                const dismiss = () => {
+                    toast.classList.add('pointer-events-none', 'translate-y-2', 'opacity-0');
+                    window.setTimeout(() => { toast.remove(); if (!document.querySelector('[data-flash-toast]')) document.getElementById('flash-region')?.remove(); }, 300);
+                };
+                toast.querySelector('[data-flash-dismiss]')?.addEventListener('click', dismiss);
+                window.setTimeout(dismiss, 5000);
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}SAHAL - Apps Menu{% endblock %}
+
+{% block content %}
+{% set carousel_id = 'apps-hero-carousel' %}
+{% set hero_content %}<div class="text-center"><h1 class="font-heading text-4xl md:text-5xl font-bold mb-4">Welcome{% if user.is_authenticated %}, {{ user.name }}{% endif %}</h1><p class="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">Your single gateway to every SAHAL module. Select an app below to get started.</p></div>{% endset %}
+{% include 'components/hero_carousel.html' %}
+
+<!-- Apps Grid -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            {% for app in apps %}
+            <a href="{{ app.url }}"
+               class="group relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 p-6 flex flex-col items-center text-center overflow-hidden">
+
+                {% if app.badge %}
+                <span class="absolute top-3 right-3 text-[10px] font-subheading font-semibold uppercase tracking-wide bg-sahal-cream text-sahal-navy px-2 py-1 rounded-full">
+                    {{ app.badge }}
+                </span>
+                {% endif %}
+
+                <div class="w-16 h-16 rounded-xl flex items-center justify-center mb-4 bg-sahal-blue shadow-md group-hover:scale-105 transition-transform overflow-hidden">
+                    {% if app.url == url_for('sahal_home') %}
+                        {% with show_wordmark=false, on_dark=true, size='md', alt='Sahal Branding Agency' %}{% include 'components/logo.html' %}{% endwith %}
+                    {% else %}
+                        <i data-lucide="{{ app.icon }}" class="w-8 h-8 text-sahal-yellow"></i>
+                    {% endif %}
+                </div>
+
+                <h3 class="font-subheading text-base font-bold text-gray-900 mb-1">{{ app.name }}</h3>
+                <p class="text-sm text-gray-500">{{ app.description }}</p>
+
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-subheading font-semibold text-sahal-blue opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </span>
+            </a>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+{% endblock %}

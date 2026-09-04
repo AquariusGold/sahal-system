@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Talent Agency - SAHAL{% endblock %}
+
+{% block content %}
+{% set carousel_id = 'talent-hero-carousel' %}
+{% set hero_content %}<h1 class="font-heading text-4xl font-bold mb-2">Talent Agency</h1><p class="text-blue-100">Discover talented people, browse their portfolios, and request a booking</p>{% endset %}
+{% include 'components/hero_carousel.html' %}
+
+<!-- Category Tabs -->
+<section class="bg-white border-b border-gray-200 sticky top-16 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-2 overflow-x-auto py-3 no-scrollbar">
+            <a href="{{ url_for('talent', category='all') }}"
+               class="shrink-0 px-4 py-2 rounded-full text-sm font-subheading font-semibold transition
+                      {% if active_category == 'all' %}bg-sahal-blue text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                All
+            </a>
+            {% for cat in categories %}
+            <a href="{{ url_for('talent', category=cat) }}"
+               class="shrink-0 px-4 py-2 rounded-full text-sm font-subheading font-semibold transition
+                      {% if active_category == cat %}bg-sahal-blue text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">
+                {{ cat }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Talent Grid (social-feed style) -->
+<section class="py-10 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for t in talents %}
+            <a href="{{ url_for('talent_profile', talent_id=t.id) }}" class="group bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition">
+                <!-- Photo -->
+                <div class="relative aspect-square bg-gradient-to-br from-sahal-blue to-sahal-navy overflow-hidden">
+                    {% if t.photo_url %}
+                    <img src="{{ t.photo_url }}" alt="{{ t.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                    {% else %}
+                    <i data-lucide="user-round" class="w-20 h-20 text-white/40 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform"></i>
+                    {% endif %}
+
+                    {% if t.featured %}
+                    <span class="absolute top-3 left-3 bg-sahal-yellow text-sahal-navy text-[10px] font-subheading font-bold uppercase tracking-wide px-2 py-1 rounded-full">Featured</span>
+                    {% endif %}
+
+                    <!-- Social-style stats overlay -->
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 flex items-center justify-between text-white text-xs">
+                        <span class="flex items-center gap-1"><i data-lucide="images" class="w-3.5 h-3.5"></i>{{ t.photos }}</span>
+                        <span class="flex items-center gap-1"><i data-lucide="users" class="w-3.5 h-3.5"></i>{{ t.followers }}</span>
+                        <span class="flex items-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 fill-sahal-yellow text-sahal-yellow"></i>{{ '%.1f'|format(t.rating) }}</span>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="p-4">
+                    <h3 class="font-subheading font-bold text-gray-900">{{ t.name }}</h3>
+                    <p class="text-xs text-sahal-blue font-semibold mb-2">{{ t.category }}</p>
+                    <span class="inline-flex items-center gap-1 text-sm font-subheading font-semibold text-sahal-blue opacity-0 group-hover:opacity-100 transition-opacity">
+                        View Profile <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </span>
+                </div>
+            </a>
+            {% else %}
+            <p class="text-gray-500 col-span-4">No talent found in this category yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

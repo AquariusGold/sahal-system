@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - SAHAL{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-sahal-blue to-sahal-navy flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">{% include 'components/logo.html' %}</div>
+                <p class="text-gray-600">Welcome back. Sign in to your account.</p>
+            </div>
+
+            {% if error %}
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <!-- Form -->
+            <form class="space-y-5" method="POST" action="/login"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue focus:border-transparent">
+                </div>
+                
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="password" name="password" placeholder="••••••••" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue focus:border-transparent">
+                        <button type="button" class="absolute right-3 top-3 text-gray-600 hover:text-gray-900">
+                            <i data-lucide="eye" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Remember & Forgot -->
+                <div class="flex justify-between items-center text-sm">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 text-sahal-blue rounded" name="remember">
+                        <span class="ml-2 text-gray-700">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sahal-blue hover:text-sahal-navy font-semibold">Forgot password?</a>
+                </div>
+                
+                <!-- Submit -->
+                <button type="submit" class="w-full bg-sahal-yellow text-sahal-navy py-3 rounded-lg hover:brightness-95 transition font-subheading font-bold text-lg">
+                    Sign In
+                </button>
+            </form>
+            
+            <!-- Footer -->
+            <p class="text-center text-gray-600 text-sm mt-8">
+                Don't have an account?
+                <a href="/signup" class="text-sahal-blue hover:text-sahal-navy font-bold">Create one now</a>
+            </p>
+        </div>
+
+        <!-- Support Link -->
+        <div class="text-center mt-6">
+            <a href="#" class="text-white hover:text-blue-200 text-sm">Need help? Contact support</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle password visibility
+document.querySelector('button[type="button"]')?.addEventListener('click', function() {
+    const input = document.getElementById('password');
+    const icon = this.querySelector('[data-lucide]');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+    } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+    }
+    lucide.createIcons();
+});
+</script>
+{% endblock %}
+

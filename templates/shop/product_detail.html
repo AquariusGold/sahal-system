@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - SAHAL{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="bg-gradient-to-r from-sahal-blue to-sahal-navy text-white py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <a href="{{ url_for('catalog', category=product.category.slug) }}" class="text-blue-100 hover:text-white text-sm inline-flex items-center gap-1 mb-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to {{ product.category.name }}
+        </a>
+        <h1 class="font-heading text-3xl font-bold">{{ product.name }}</h1>
+    </div>
+</section>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid lg:grid-cols-2 gap-10">
+        <!-- Media -->
+        <div>
+            <div class="relative aspect-square rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+                {% if product.image_url %}
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="absolute inset-0 w-full h-full object-cover">
+                {% else %}
+                <div class="absolute inset-0 flex items-center justify-center bg-sahal-navy px-6">
+                    {% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details & Order Form -->
+        <div>
+            <span class="inline-block px-2 py-1 bg-sahal-cream text-sahal-navy text-xs rounded font-subheading font-semibold mb-3">{{ product.category.name }}</span>
+
+            <div class="mb-4">
+                {% if product.pricing_type == 'custom' or not product.base_price %}
+                <span class="text-3xl font-bold text-sahal-blue">Custom Quote</span>
+                {% else %}
+                <span class="text-3xl font-bold text-sahal-blue">${{ '%.2f'|format(product.base_price) }}</span>
+                {% if product.pricing_type == 'per_unit' %}<span class="text-gray-500 text-sm"> / unit</span>{% endif %}
+                {% endif %}
+            </div>
+
+            <p class="text-gray-700 leading-relaxed mb-6">{{ product.long_description or product.description }}</p>
+
+            <!-- Specifications -->
+            {% if product.specifications_list %}
+            <div class="mb-6">
+                <h2 class="font-subheading font-bold text-lg text-gray-900 mb-3">Specifications</h2>
+                <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2 bg-white border border-gray-200 rounded-xl p-4">
+                    {% for spec in product.specifications_list %}
+                    <div class="flex justify-between sm:block gap-2 text-sm border-b border-gray-100 sm:border-0 pb-2 sm:pb-0">
+                        <dt class="text-gray-500 font-subheading font-semibold">{{ spec.label }}</dt>
+                        <dd class="text-gray-800">{{ spec.value }}</dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+            {% endif %}
+
+            <!-- Order Form -->
+            {% set cart_product = {'product_id': product.id, 'name': product.name, 'category_name': product.category.name, 'icon': product.category.icon or 'package', 'image_url': product.image_url or '', 'price': product.base_price|float if product.base_price else 0} %}
+            <form data-cart-form data-product="{{ cart_product|tojson|forceescape }}" class="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
+                {% if product.options_list %}
+                {% for opt in product.options_list %}
+                <div>
+                    <label class="block text-sm font-subheading font-semibold text-gray-700 mb-2">{{ opt.name }}</label>
+                    <div class="flex flex-wrap gap-2">
+                        {% for value in opt.values %}
+                        <label class="cursor-pointer">
+                            <input type="radio" name="option_{{ opt.name }}" data-option-name="{{ opt.name }}" value="{{ value }}" {% if loop.first %}checked{% endif %} class="peer sr-only">
+                            <span class="inline-block px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-subheading font-medium text-gray-700 peer-checked:bg-sahal-blue peer-checked:text-white peer-checked:border-sahal-blue transition">
+                                {{ value }}
+                            </span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <div>
+                    <label class="block text-sm font-subheading font-semibold text-gray-700 mb-2">Quantity</label>
+                    <input type="number" name="quantity" value="1" min="1" step="1"
+                           class="w-24 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                </div>
+
+                <button type="submit" class="w-full bg-sahal-yellow text-sahal-navy py-3 rounded-lg hover:brightness-95 transition font-subheading font-bold text-lg">
+                    Add to Cart
+                </button>
+                <p class="text-xs text-gray-500 text-center">Review your items and confirm the order from your cart.</p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

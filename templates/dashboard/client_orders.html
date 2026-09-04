@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}My Orders - SAHAL{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-6xl p-5 sm:p-6 md:p-8">
+    <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <div><p class="text-xs font-subheading font-bold uppercase tracking-[0.16em] text-sahal-blue">Client portal</p><h1 class="mt-1 font-heading text-3xl font-bold text-gray-900">My Orders</h1><p class="mt-2 text-gray-600">Track the status, delivery progress, and details for every service order.</p></div>
+        <a href="{{ url_for('user_dashboard') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-subheading font-semibold text-sahal-blue transition hover:bg-blue-50"><i data-lucide="arrow-left" class="h-4 w-4"></i> Back to Dashboard</a>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+        {% for order in orders %}
+        {% if order.status == 'placed' %}{% set accent = 'border-l-blue-500' %}{% set badge = 'bg-blue-100 text-blue-700' %}{% set icon_bg = 'bg-blue-100 text-blue-600' %}
+        {% elif order.status == 'assigned' %}{% set accent = 'border-l-violet-500' %}{% set badge = 'bg-violet-100 text-violet-700' %}{% set icon_bg = 'bg-violet-100 text-violet-600' %}
+        {% elif order.status == 'accepted' %}{% set accent = 'border-l-orange-500' %}{% set badge = 'bg-orange-100 text-orange-700' %}{% set icon_bg = 'bg-orange-100 text-orange-600' %}
+        {% elif order.status == 'fulfilled' %}{% set accent = 'border-l-teal-500' %}{% set badge = 'bg-teal-100 text-teal-700' %}{% set icon_bg = 'bg-teal-100 text-teal-600' %}
+        {% elif order.status == 'dispatched' %}{% set accent = 'border-l-indigo-500' %}{% set badge = 'bg-indigo-100 text-indigo-700' %}{% set icon_bg = 'bg-indigo-100 text-indigo-600' %}
+        {% elif order.status == 'received' %}{% set accent = 'border-l-green-500' %}{% set badge = 'bg-green-100 text-green-700' %}{% set icon_bg = 'bg-green-100 text-green-600' %}
+        {% else %}{% set accent = 'border-l-red-500' %}{% set badge = 'bg-red-100 text-red-700' %}{% set icon_bg = 'bg-red-100 text-red-600' %}{% endif %}
+        <a href="{{ url_for('client_order_detail', order_id=order.id) }}" class="group block border border-gray-200 border-l-4 {{ accent }} bg-white p-5 transition hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue focus:ring-offset-2">
+            <div class="flex items-start justify-between gap-4"><div class="flex min-w-0 items-start gap-3"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg {{ icon_bg }}"><i data-lucide="shopping-bag" class="h-5 w-5"></i></span><div class="min-w-0"><h2 class="font-subheading text-lg font-bold text-gray-900">Order #{{ order.id }}</h2><p class="mt-1 text-xs text-gray-500">Placed {{ order.created_at.strftime('%d %b %Y') }}</p></div></div><span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-subheading font-bold {{ badge }}">{{ order.status_label }}</span></div>
+            <div class="mt-5 border-y border-gray-100 py-4"><p class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Services</p><p class="mt-1.5 truncate text-sm font-semibold text-gray-800">{% for item in order.items %}{{ item.quantity }}x {{ item.service.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p></div>
+            {% if order.status != 'cancelled' %}
+            <div class="mt-4"><div class="flex items-center justify-between text-xs"><span class="font-subheading font-semibold text-gray-600">Order progress</span><span class="text-gray-500">{{ order.timeline|selectattr('timestamp')|list|length }}/{{ order.timeline|length }} stages</span></div><div class="mt-2 flex gap-1.5">{% for stage in order.timeline %}<span class="h-1.5 flex-1 rounded-full {% if stage.timestamp %}bg-sahal-blue{% else %}bg-gray-200{% endif %}"></span>{% endfor %}</div></div>
+            {% else %}
+            <p class="mt-4 text-xs font-medium text-red-700">This order has been cancelled and retained for your records.</p>
+            {% endif %}
+            <div class="mt-5 flex items-center justify-between"><p class="font-heading text-xl font-bold text-sahal-blue">${{ '%.2f'|format(order.total_price) }}</p><span class="inline-flex items-center gap-1 text-sm font-subheading font-bold text-sahal-blue transition group-hover:text-sahal-navy">View order <i data-lucide="arrow-right" class="h-4 w-4"></i></span></div>
+        </a>
+        {% else %}
+        <div class="md:col-span-2 border border-dashed border-gray-300 bg-white px-6 py-14 text-center"><span class="mx-auto flex h-14 w-14 items-center justify-center rounded-lg bg-blue-50 text-sahal-blue"><i data-lucide="shopping-bag" class="h-7 w-7"></i></span><h2 class="mt-5 font-subheading text-xl font-bold text-gray-900">No orders yet</h2><p class="mx-auto mt-2 max-w-sm text-sm leading-6 text-gray-500">Browse the catalog to choose the services that fit your next project.</p><a href="{{ url_for('catalog') }}" class="mt-5 inline-flex items-center gap-2 rounded-lg bg-sahal-blue px-4 py-2.5 text-sm font-subheading font-bold text-white transition hover:bg-sahal-navy"><i data-lucide="shopping-bag" class="h-4 w-4"></i> Browse Catalog</a></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Orders - SAHAL Admin{% endblock %}
+{% block content %}
+<div class="p-5 sm:p-6 md:p-8">
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="text-xs font-subheading font-bold uppercase tracking-[0.16em] text-sahal-blue">Order management</p>
+            <h1 class="mt-1 font-heading text-3xl font-bold text-gray-900">Orders</h1>
+            <p class="mt-1 text-gray-600">All customer orders, sorted with the most recent first.</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-subheading font-semibold text-sahal-blue transition hover:bg-blue-50"><i data-lucide="arrow-left" class="h-4 w-4"></i> Back to Dashboard</a>
+    </div>
+
+    <section class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-5">
+            <div>
+                <h2 class="font-subheading font-bold text-gray-900">All orders</h2>
+                <div class="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-gray-500">
+                    <span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-red-500"></i>New</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-violet-500"></i>Assigned</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-orange-500"></i>In progress</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-teal-500"></i>Fulfilled</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-blue-500"></i>Dispatched</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-green-500"></i>Received</span><span><i class="mr-1 inline-block h-2 w-2 rounded-full bg-gray-500"></i>Cancelled</span>
+                </div>
+            </div>
+        </div>
+
+        <form method="GET" class="grid gap-3 border-b border-gray-100 p-5 lg:grid-cols-[minmax(0,1fr)_165px_165px_100px_auto_auto]">
+            <div class="relative">
+                <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"></i>
+                <input type="search" name="search" value="{{ search }}" placeholder="Order #, client, company, product or service" class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm text-gray-800 placeholder:text-gray-400 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+            </div>
+            <input type="date" name="date" value="{{ order_date }}" aria-label="Filter by order date" class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+            <select name="status" aria-label="Filter by status" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+                <option value="">All statuses</option>
+                {% for value, label in [('placed', 'New'), ('assigned', 'Assigned'), ('accepted', 'In progress'), ('fulfilled', 'Fulfilled'), ('dispatched', 'Dispatched'), ('received', 'Received'), ('cancelled', 'Cancelled')] %}
+                <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <select name="per_page" aria-label="Orders per page" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+                {% for size in [50, 100, 200] %}<option value="{{ size }}" {% if per_page == size %}selected{% endif %}>{{ size }} rows</option>{% endfor %}
+            </select>
+            <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-sahal-blue px-4 py-2 text-sm font-subheading font-bold text-white transition hover:bg-sahal-navy"><i data-lucide="sliders-horizontal" class="h-4 w-4"></i> Apply</button>
+            <a href="{{ url_for('admin_orders') }}" class="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-subheading font-semibold text-gray-600 transition hover:bg-gray-100">Reset</a>
+        </form>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-[1000px] w-full text-left">
+                <thead class="bg-gray-50"><tr><th class="px-5 py-3 text-xs font-subheading font-bold uppercase tracking-wide text-gray-500">Order</th><th class="px-5 py-3 text-xs font-subheading font-bold uppercase tracking-wide text-gray-500">Customer</th><th class="px-5 py-3 text-xs font-subheading font-bold uppercase tracking-wide text-gray-500">Products / Services</th><th class="px-5 py-3 text-xs font-subheading font-bold uppercase tracking-wide text-gray-500">Total</th><th class="px-5 py-3 text-xs font-subheading font-bold uppercase tracking-wide text-gray-500">Placed</th><th class="px-5 py-3 text-xs font-subheading font-bold uppercase tracking-wide text-gray-500">Status</th><th class="px-5 py-3"></th></tr></thead>
+                <tbody class="divide-y divide-white/70">
+                    {% for order in orders %}
+                    {% if order.status == 'placed' %}{% set row_class = 'bg-red-50 hover:bg-red-100' %}{% set badge_class = 'bg-red-100 text-red-700' %}
+                    {% elif order.status == 'assigned' %}{% set row_class = 'bg-violet-50 hover:bg-violet-100' %}{% set badge_class = 'bg-violet-100 text-violet-700' %}
+                    {% elif order.status == 'accepted' %}{% set row_class = 'bg-orange-50 hover:bg-orange-100' %}{% set badge_class = 'bg-orange-100 text-orange-700' %}
+                    {% elif order.status == 'fulfilled' %}{% set row_class = 'bg-teal-50 hover:bg-teal-100' %}{% set badge_class = 'bg-teal-100 text-teal-700' %}
+                    {% elif order.status == 'dispatched' %}{% set row_class = 'bg-blue-50 hover:bg-blue-100' %}{% set badge_class = 'bg-blue-100 text-blue-700' %}
+                    {% elif order.status == 'received' %}{% set row_class = 'bg-green-50 hover:bg-green-100' %}{% set badge_class = 'bg-green-100 text-green-700' %}
+                    {% else %}{% set row_class = 'bg-gray-100 hover:bg-gray-200' %}{% set badge_class = 'bg-gray-200 text-gray-700' %}{% endif %}
+                    <tr data-order-row data-order-url="{{ url_for('admin_order_detail', order_id=order.id) }}" tabindex="0" role="link" class="cursor-pointer {{ row_class }} transition">
+                        <td class="px-5 py-4 font-subheading font-bold text-gray-900">#{{ order.id }}</td>
+                        <td class="px-5 py-4"><p class="text-sm font-semibold text-gray-800">{{ order.user.full_name or order.user.email }}</p><p class="mt-1 text-xs text-gray-500">{{ order.user.email }}</p></td>
+                        <td class="px-5 py-4 text-sm text-gray-700">{% for item in order.items %}<p{% if not loop.first %} class="mt-1"{% endif %}>{{ item.quantity }}x {{ item.service.name }}</p>{% endfor %}</td>
+                        <td class="px-5 py-4 text-sm font-subheading font-bold text-sahal-blue">${{ '%.2f'|format(order.total_price) }}</td>
+                        <td class="px-5 py-4 text-sm text-gray-600">{{ order.created_at|date_format }}</td>
+                        <td class="px-5 py-4"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-subheading font-bold {{ badge_class }}">{{ order.status_label }}</span></td>
+                        <td class="px-5 py-4 text-right"><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="inline-flex items-center gap-1 text-sm font-subheading font-bold text-sahal-blue hover:text-sahal-navy">View <i data-lucide="arrow-right" class="h-4 w-4"></i></a></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="px-5 py-10 text-center text-gray-500">No orders match the current filters.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if pagination.pages > 1 %}
+        <div class="flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 px-5 py-4">
+            <p class="text-sm text-gray-500">Showing {{ ((pagination.page - 1) * per_page) + 1 }}-{{ ((pagination.page - 1) * per_page) + orders|length }} of {{ pagination.total }} orders</p>
+            <nav class="flex items-center gap-1" aria-label="Orders pagination">
+                {% if pagination.has_prev %}<a href="{{ url_for('admin_orders', page=pagination.prev_num, per_page=per_page, search=search, status=selected_status, date=order_date) }}" class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Previous</a>{% endif %}
+                {% for page_number in pagination.iter_pages() %}
+                    {% if page_number %}<a href="{{ url_for('admin_orders', page=page_number, per_page=per_page, search=search, status=selected_status, date=order_date) }}" class="min-w-9 rounded-lg px-3 py-2 text-center text-sm font-subheading font-bold {% if page_number == pagination.page %}bg-sahal-blue text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">{{ page_number }}</a>{% else %}<span class="px-1 text-gray-400">...</span>{% endif %}
+                {% endfor %}
+                {% if pagination.has_next %}<a href="{{ url_for('admin_orders', page=pagination.next_num, per_page=per_page, search=search, status=selected_status, date=order_date) }}" class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Next</a>{% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('[data-order-row]').forEach(function (row) {
+    const openOrder = function () { window.location.href = row.dataset.orderUrl; };
+    row.addEventListener('click', function (event) { if (!event.target.closest('a, button, input, select, textarea')) openOrder(); });
+    row.addEventListener('keydown', function (event) { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openOrder(); } });
+});
+</script>
+{% endblock %}

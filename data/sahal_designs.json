@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "title": "Designs",
+    "category": "Social Media Campaign",
+    "image": "uploads/designs/20260901154337705244.webp"
+  },
+  {
+    "id": 2,
+    "title": "Design 2",
+    "category": "Brochure"
+  },
+  {
+    "id": 3,
+    "title": "Design 3",
+    "category": "Poster"
+  },
+  {
+    "id": 4,
+    "title": "Design 4",
+    "category": "Business Card"
+  },
+  {
+    "id": 5,
+    "title": "Design 5",
+    "category": "Banner"
+  },
+  {
+    "id": 6,
+    "title": "Design 6",
+    "category": "Packaging"
+  },
+  {
+    "id": 7,
+    "title": "Design 7",
+    "category": "Logo"
+  },
+  {
+    "id": 8,
+    "title": "Design 8",
+    "category": "Poster"
+  }
+]

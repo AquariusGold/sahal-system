@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - SAHAL{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto p-5 sm:p-6 lg:p-8">
+    <div class="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="text-xs font-subheading font-bold uppercase tracking-wider text-sahal-blue">Account</p>
+            <h1 class="mt-1 font-heading text-3xl font-bold text-gray-900">My profile</h1>
+            <p class="mt-1 text-gray-600">Keep your contact and business details up to date.</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="inline-flex items-center gap-2 text-sm font-subheading font-bold text-sahal-blue hover:text-sahal-navy">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+        </a>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <aside class="self-start border border-gray-200 bg-white rounded-lg p-6">
+            <div class="flex flex-col items-center text-center">
+                <div class="relative h-28 w-28 overflow-hidden rounded-full bg-sahal-navy ring-4 ring-sahal-cream flex items-center justify-center text-3xl font-heading font-bold text-white">
+                    {% if profile.avatar_url %}
+                    <img id="avatar-preview" src="{{ url_for('static', filename=profile.avatar_url) }}" alt="{{ profile.full_name }}" class="h-full w-full object-cover">
+                    {% else %}
+                    <img id="avatar-preview" src="" alt="" class="hidden h-full w-full object-cover">
+                    <span id="avatar-initials">{{ profile.initials }}</span>
+                    {% endif %}
+                </div>
+                <h2 class="mt-5 font-subheading font-bold text-gray-900">{{ profile.full_name }}</h2>
+                <p class="mt-1 text-sm text-gray-500">{{ profile.role_label }}</p>
+            </div>
+
+            <div class="mt-6 border-t border-gray-100 pt-5">
+                <label for="avatar" class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-sahal-blue px-4 py-2.5 text-sm font-subheading font-bold text-sahal-blue transition hover:bg-blue-50">
+                    <i data-lucide="camera" class="h-4 w-4"></i> Change photo
+                </label>
+                <input id="avatar" name="avatar" type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="sr-only">
+                <p class="mt-3 text-center text-xs leading-5 text-gray-500">JPG, PNG, GIF, or WEBP. Maximum upload size: 16 MB.</p>
+            </div>
+
+            <dl class="mt-6 space-y-4 border-t border-gray-100 pt-5 text-sm">
+                <div><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Member since</dt><dd class="mt-1 font-semibold text-gray-700">{{ profile.created_at.strftime('%B %Y') if profile.created_at else 'Recently' }}</dd></div>
+                <div><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Account type</dt><dd class="mt-1 font-semibold capitalize text-gray-700">{{ profile.account_type }}</dd></div>
+            </dl>
+        </aside>
+
+        <div class="space-y-6">
+            <section class="border border-gray-200 bg-white rounded-lg p-5 sm:p-6">
+                <div class="mb-5 flex items-center gap-3">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-sahal-blue"><i data-lucide="contact" class="h-5 w-5"></i></div>
+                    <div><h2 class="font-subheading font-bold text-gray-900">Personal details</h2><p class="text-sm text-gray-500">The essentials we use to identify and contact you.</p></div>
+                </div>
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div class="sm:col-span-2"><label for="full_name" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Full name</label><input id="full_name" name="full_name" value="{{ profile.full_name }}" required autocomplete="name" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div><label for="email" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Email address</label><input id="email" name="email" type="email" value="{{ profile.email }}" required autocomplete="email" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div><label for="phone_number" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Phone number</label><input id="phone_number" name="phone_number" type="tel" value="{{ profile.phone_number or '' }}" autocomplete="tel" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div><label for="job_title" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Job title</label><input id="job_title" name="job_title" value="{{ profile.job_title or '' }}" autocomplete="organization-title" placeholder="e.g. Marketing Manager" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div><label for="location" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Location</label><input id="location" name="location" value="{{ profile.location or '' }}" autocomplete="address-level2" placeholder="e.g. Nairobi, Kenya" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div class="sm:col-span-2"><label for="address" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Billing / shipping address</label><input id="address" name="address" value="{{ profile.address or '' }}" autocomplete="street-address" placeholder="Street, building, area, city" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                </div>
+            </section>
+
+            <section class="border border-gray-200 bg-white rounded-lg p-5 sm:p-6">
+                <div class="mb-5 flex items-center gap-3">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-sahal-cream text-sahal-navy"><i data-lucide="building-2" class="h-5 w-5"></i></div>
+                    <div><h2 class="font-subheading font-bold text-gray-900">Business details</h2><p class="text-sm text-gray-500">Optional information for service requests and documents.</p></div>
+                </div>
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div><label for="account_type" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Account type</label><select id="account_type" name="account_type" class="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"><option value="personal" {% if profile.account_type == 'personal' %}selected{% endif %}>Personal</option><option value="business" {% if profile.account_type == 'business' %}selected{% endif %}>Business</option></select></div>
+                    <div><label for="industry" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Industry</label><input id="industry" name="industry" value="{{ profile.industry or '' }}" placeholder="e.g. Hospitality" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div><label for="company_name" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Company name</label><input id="company_name" name="company_name" value="{{ profile.company_name or '' }}" autocomplete="organization" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div><label for="company_website" class="mb-2 block text-sm font-subheading font-bold text-gray-700">Company website</label><input id="company_website" name="company_website" type="url" value="{{ profile.company_website or '' }}" placeholder="https://" autocomplete="url" class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20"></div>
+                    <div class="sm:col-span-2"><label for="bio" class="mb-2 block text-sm font-subheading font-bold text-gray-700">About you</label><textarea id="bio" name="bio" rows="4" maxlength="1000" placeholder="Add a short introduction or any useful context for the SAHAL team." class="w-full resize-y rounded-lg border border-gray-300 px-3.5 py-2.5 text-gray-900 outline-none transition focus:border-sahal-blue focus:ring-2 focus:ring-sahal-blue/20">{{ profile.bio or '' }}</textarea></div>
+                </div>
+            </section>
+
+            <div class="flex justify-end">
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-sahal-blue px-5 py-3 text-sm font-subheading font-bold text-white transition hover:bg-sahal-navy focus:outline-none focus:ring-2 focus:ring-sahal-blue focus:ring-offset-2"><i data-lucide="save" class="h-4 w-4"></i> Save changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const avatarInput = document.getElementById('avatar');
+    avatarInput?.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        const preview = document.getElementById('avatar-preview');
+        const initials = document.getElementById('avatar-initials');
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('hidden');
+        initials?.classList.add('hidden');
+    });
+</script>
+{% endblock %}

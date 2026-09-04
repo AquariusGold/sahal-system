@@ -1,0 +1,225 @@
+{
+  "slots": [
+    {
+      "id": 1,
+      "image": "uploads/carousel/20260902002510685627.webp"
+    },
+    {
+      "id": 2,
+      "image": "uploads/carousel/20260902002510686300.webp"
+    },
+    {
+      "id": 3,
+      "image": "uploads/carousel/20260902002510687022.webp"
+    },
+    {
+      "id": 4,
+      "image": "uploads/carousel/20260902001227701620.webp"
+    },
+    {
+      "id": 5,
+      "image": "uploads/carousel/20260902002510687649.webp"
+    },
+    {
+      "id": 6,
+      "image": "uploads/carousel/20260902001227703275.webp"
+    },
+    {
+      "id": 7,
+      "image": "uploads/carousel/20260902002510688337.webp"
+    },
+    {
+      "id": 8,
+      "image": "uploads/carousel/20260902001227704924.webp"
+    },
+    {
+      "id": 9,
+      "image": "uploads/carousel/20260902001227705651.webp"
+    }
+  ],
+  "pages": {
+    "apps": {
+      "start": 1,
+      "sequence": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "copy": {
+        "1": {
+          "eyebrow": "SAHAL Platform",
+          "title": "One place for every workflow",
+          "description": "Move between business tools, client workspaces, and creative services with ease."
+        },
+        "2": {
+          "eyebrow": "Connected Work",
+          "title": "Run the work that matters",
+          "description": "Manage projects, orders, communication, and operations from one platform."
+        },
+        "3": {
+          "eyebrow": "Built for Momentum",
+          "title": "Make every next step clear",
+          "description": "Keep teams and clients aligned with practical tools built around daily work."
+        },
+        "4": {
+          "eyebrow": "Your Workspace",
+          "title": "Everything starts here",
+          "description": "Open the right SAHAL app and continue exactly where your work needs you."
+        },
+        "5": {
+          "eyebrow": "Business Operations",
+          "title": "Stay organized as you grow",
+          "description": "Bring service delivery, people, and client communication into a focused workspace."
+        },
+        "6": {
+          "eyebrow": "Client Experience",
+          "title": "Clear progress at every stage",
+          "description": "Give every client a simple way to follow orders, messages, and documents."
+        },
+        "7": {
+          "eyebrow": "Creative Services",
+          "title": "Turn ideas into visible work",
+          "description": "Explore the tools and talent that bring campaigns, events, and brands to life."
+        },
+        "8": {
+          "eyebrow": "Reliable Delivery",
+          "title": "From request to result",
+          "description": "Use one connected system to keep the next action visible and accountable."
+        },
+        "9": {
+          "eyebrow": "SAHAL",
+          "title": "Start with the work in front of you",
+          "description": "Select an app below to manage your next task, project, or client request."
+        }
+      }
+    },
+    "catalog": {
+      "start": 4,
+      "sequence": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        1,
+        2,
+        3
+      ],
+      "copy": {
+        "1": {
+          "eyebrow": "Products and Services",
+          "title": "Print that makes an impression",
+          "description": "Choose reliable print solutions for campaigns, customer touchpoints, and daily operations."
+        },
+        "2": {
+          "eyebrow": "Branding Solutions",
+          "title": "Build a brand people recognize",
+          "description": "Bring consistent identity, campaign assets, and business materials together."
+        },
+        "3": {
+          "eyebrow": "Event Production",
+          "title": "Make the occasion feel complete",
+          "description": "Source visual materials and event essentials that carry the experience."
+        },
+        "4": {
+          "eyebrow": "Made to Order",
+          "title": "Configure the details that matter",
+          "description": "Choose specifications, quantities, and options around the way your project needs to work."
+        },
+        "5": {
+          "eyebrow": "Business Essentials",
+          "title": "Keep your team presentation-ready",
+          "description": "Find practical products for sales, service, operations, and client-facing moments."
+        },
+        "6": {
+          "eyebrow": "Campaign Ready",
+          "title": "Give every launch a stronger presence",
+          "description": "Select assets that make new products, offers, and events easier to notice."
+        },
+        "7": {
+          "eyebrow": "Quality in the Details",
+          "title": "Finish every piece with intent",
+          "description": "Explore materials and formats built to support your brand at every scale."
+        },
+        "8": {
+          "eyebrow": "Simple Ordering",
+          "title": "From selection to delivery",
+          "description": "Build your cart, review requirements, and send one clear order to the SAHAL team."
+        },
+        "9": {
+          "eyebrow": "SAHAL Catalog",
+          "title": "Find the right solution for the job",
+          "description": "Browse our full range of printing, branding, and event services."
+        }
+      }
+    },
+    "talent": {
+      "start": 7,
+      "sequence": [
+        7,
+        8,
+        9,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "copy": {
+        "1": {
+          "eyebrow": "SAHAL Talent",
+          "title": "Find the right face for the moment",
+          "description": "Discover professionals available for campaigns, productions, events, and brand work."
+        },
+        "2": {
+          "eyebrow": "Talent Agency",
+          "title": "Bring your brief to life",
+          "description": "Browse profiles, review portfolios, and send a detailed booking request."
+        },
+        "3": {
+          "eyebrow": "Creative Collaboration",
+          "title": "Talent that fits the brief",
+          "description": "Connect with people across performance, influence, modelling, music, and dance."
+        },
+        "4": {
+          "eyebrow": "Campaign Casting",
+          "title": "Make the audience stop and look",
+          "description": "Find creative professionals who can carry the tone and reach of your next campaign."
+        },
+        "5": {
+          "eyebrow": "Production Ready",
+          "title": "From concept to call time",
+          "description": "Share dates, location, and requirements so the booking team can move quickly."
+        },
+        "6": {
+          "eyebrow": "Stories in Motion",
+          "title": "Find performers built for the frame",
+          "description": "Explore talent for screen work, stage, social storytelling, and live experiences."
+        },
+        "7": {
+          "eyebrow": "A Stronger Lineup",
+          "title": "People make the experience",
+          "description": "Choose talent that helps the idea feel credible, memorable, and complete."
+        },
+        "8": {
+          "eyebrow": "Booking Support",
+          "title": "Send a clear request",
+          "description": "Tell us what you need and receive guidance on availability, logistics, and quote options."
+        },
+        "9": {
+          "eyebrow": "SAHAL Talent",
+          "title": "Discover talent for your next project",
+          "description": "Browse portfolios and request a booking when you find the right match."
+        }
+      }
+    }
+  }
+}

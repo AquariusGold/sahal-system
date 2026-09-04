@@ -1,0 +1,217 @@
+<!-- Navbar Component -->
+{% macro apps_nav_button() -%}
+<a href="/" class="inline-flex items-center gap-2 rounded-lg border border-sahal-blue px-3 py-2 text-sahal-blue transition hover:bg-sahal-blue hover:text-white" aria-label="Apps">
+    <i data-lucide="layout-grid" class="h-4 w-4"></i><span class="hidden sm:inline text-sm font-subheading font-semibold">Apps</span>
+</a>
+{%- endmacro %}
+
+{% macro account_nav_menu() -%}
+{% if user.is_authenticated %}
+<div class="relative" x-data="{ userMenuOpen: false }">
+    <button @click="userMenuOpen = !userMenuOpen" @keydown.escape="userMenuOpen = false" class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-sahal-blue text-sm font-bold text-white transition hover:ring-2 hover:ring-sahal-blue/30" aria-label="Open account menu">
+        {% if user.avatar_url %}<img src="{{ url_for('static', filename=user.avatar_url) }}" alt="" class="h-full w-full object-cover">{% else %}{{ user.initials or 'U' }}{% endif %}
+    </button>
+    <div x-show="userMenuOpen" x-cloak @click.away="userMenuOpen = false" class="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-gray-200 bg-white py-2 shadow-lg">
+        <a href="{{ url_for('my_profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a><a href="{{ url_for('settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a><hr class="my-2 border-gray-100"><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">Logout</button></form>
+    </div>
+</div>
+{% else %}
+<a href="{{ url_for('login') }}" class="hidden text-sm font-subheading font-semibold text-gray-700 transition hover:text-sahal-blue sm:inline">Sign In</a><a href="{{ url_for('signup') }}" class="rounded-lg bg-sahal-yellow px-3 py-2 text-sm font-subheading font-bold text-sahal-navy transition hover:brightness-95">Get Started</a>
+{% endif %}
+{%- endmacro %}
+
+{% if is_dashboard %}
+    <!-- Dashboard Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div class="px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <!-- Left: Menu Toggle & Logo -->
+                <div class="flex items-center gap-4">
+                    <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 hover:text-gray-900 md:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    {% include 'components/logo.html' with context %}
+                </div>
+                
+                <!-- Right: Notifications & User Menu -->
+                <div class="flex items-center gap-6">
+                    <!-- Apps -->
+                    <a href="/" class="hidden sm:inline-flex items-center gap-2 text-gray-600 hover:text-sahal-blue text-sm font-subheading font-semibold">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                        Apps
+                    </a>
+
+                    <!-- User Menu -->
+                    <div class="relative" x-data="{ userMenuOpen: false }">
+                        <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-2 text-gray-700">
+                            <div class="w-8 h-8 overflow-hidden bg-sahal-blue rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                {% if user.avatar_url %}
+                                <img src="{{ url_for('static', filename=user.avatar_url) }}" alt="" class="w-full h-full object-cover">
+                                {% else %}
+                                {{ user.initials or 'U' }}
+                                {% endif %}
+                            </div>
+                            <span class="hidden sm:inline text-sm">{{ user.name or 'User' }}</span>
+                        </button>
+                        <div x-show="userMenuOpen" @click.away="userMenuOpen = false" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                            <a href="{{ url_for('my_profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
+                            <a href="{{ url_for('settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
+                            <hr class="my-2">
+                            <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">Logout</button></form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% elif is_apps_menu %}
+    <!-- Apps Menu Navbar (Logo + Sign In only) -->
+    <nav class="bg-white/95 backdrop-blur border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="/">{% include 'components/logo.html' %}</a>
+
+                <!-- Apps and Account -->
+                <div class="flex items-center gap-4">
+                    {{ apps_nav_button() }}
+                    {{ account_nav_menu() }}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% elif is_sahal_site %}
+    <!-- Sahal Branding Agency Portfolio Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/sahal" class="flex items-center">{% with size='lg', alt='Sahal Branding Agency' %}{% include 'components/logo.html' %}{% endwith %}</a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-1 rounded-full bg-gray-100 p-1">
+                    <a href="/sahal" class="px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-white hover:text-sahal-blue font-subheading font-semibold transition">Home</a>
+                    <a href="/sahal/projects" class="px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-white hover:text-sahal-blue font-subheading font-semibold transition">Projects</a>
+                    <a href="/sahal/designs" class="px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-white hover:text-sahal-blue font-subheading font-semibold transition">Designs</a>
+                    <a href="/sahal/events" class="px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-white hover:text-sahal-blue font-subheading font-semibold transition">Events</a>
+                    <a href="/sahal/about" class="px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-white hover:text-sahal-blue font-subheading font-semibold transition">About</a>
+                    <a href="/sahal/contact" class="px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-white hover:text-sahal-blue font-subheading font-semibold transition">Contact</a>
+                </div>
+
+                <!-- Apps and Account -->
+                <div class="flex items-center gap-4">
+                    {{ apps_nav_button() }}
+                    {{ account_nav_menu() }}
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="sahal-mobile-menu-btn" class="md:hidden text-gray-700">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="sahal-mobile-menu" class="hidden md:hidden pb-4 space-y-2">
+                <a href="/sahal" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
+                <a href="/sahal/projects" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Projects</a>
+                <a href="/sahal/designs" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Designs</a>
+                <a href="/sahal/events" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Events</a>
+                <a href="/sahal/about" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">About</a>
+                <a href="/sahal/contact" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Contact</a>
+                <a href="/" class="block px-4 py-2 text-sahal-blue font-semibold hover:bg-gray-100 rounded">Back to Apps</a>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        document.getElementById('sahal-mobile-menu-btn')?.addEventListener('click', function() {
+            document.getElementById('sahal-mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+
+{% elif is_talent_site %}
+    <!-- Talent Agency Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/talent">{% with caption='Talent Agency' %}{% include 'components/logo.html' %}{% endwith %}</a>
+
+                <!-- Apps and Account -->
+                <div class="flex items-center gap-4">
+                    {{ apps_nav_button() }}
+                    {{ account_nav_menu() }}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% elif is_shop_site %}
+    <!-- Products & Services Shop Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/catalog">{% with caption='Products & Services' %}{% include 'components/logo.html' %}{% endwith %}</a>
+
+                <!-- Right: Cart, Apps, and Account -->
+                <div class="flex items-center gap-3">
+                    <a href="/catalog/cart" class="relative text-gray-700 hover:text-sahal-blue p-2">
+                        <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                        <span id="cart-count" class="hidden absolute -top-1 -right-1 bg-sahal-yellow text-sahal-navy text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center">0</span>
+                    </a>
+                    {{ apps_nav_button() }}
+                    {{ account_nav_menu() }}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% else %}
+    <!-- Public Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="/">{% include 'components/logo.html' %}</a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="/" class="text-gray-700 hover:text-sahal-blue font-subheading font-semibold">Home</a>
+                    <a href="/talent" class="text-gray-700 hover:text-sahal-blue font-subheading font-semibold">Talent</a>
+                    <a href="/catalog" class="text-gray-700 hover:text-sahal-blue font-subheading font-semibold">Products</a>
+                    <a href="#contact" class="text-gray-700 hover:text-sahal-blue font-subheading font-semibold">Contact</a>
+                </div>
+                
+                <!-- Apps and Account -->
+                <div class="flex items-center gap-4">
+                    {{ apps_nav_button() }}
+                    {{ account_nav_menu() }}
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-gray-700">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-2">
+                <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Home</a>
+                <a href="/talent" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Talent</a>
+                <a href="/catalog" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Products</a>
+                <a href="#contact" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
+{% endif %}

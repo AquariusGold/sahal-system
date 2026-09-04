@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Sahal Branding Agency{% endblock %}
+
+{% block content %}
+<section class="sahal-page-hero text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+        <div>
+            <p class="text-sm font-subheading font-bold uppercase tracking-wide text-sahal-yellow">About the studio</p>
+            <h1 class="font-heading text-4xl md:text-5xl font-bold mt-2 mb-3">Brand thinking with production discipline.</h1>
+            <p class="text-blue-100 max-w-2xl">We build identities that work on screens, paper, signage, packaging, and live spaces.</p>
+        </div>
+        {% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[.85fr_1.15fr] gap-12">
+        <div class="sahal-card p-8 h-fit">
+            {% with variant='vertical', size='md', alt='Sahal Branding Agency' %}{% include 'components/logo.html' %}{% endwith %}
+            <p class="text-sm text-gray-600 mt-6">Identity, print, signage, campaign visuals, and event branding from one coordinated studio.</p>
+        </div>
+        <div class="space-y-6 text-gray-700 leading-relaxed text-lg">
+            <p>Sahal Branding Agency is a creative studio dedicated to building strong, memorable, and impactful brands. We work with businesses of all sizes to transform ideas into powerful visual identities that connect with audiences and stand out in competitive markets.</p>
+            <p>Our approach combines strategy, creativity, and attention to detail. Every brand we create is designed to communicate clearly, inspire trust, and leave a lasting impression.</p>
+            <p>At Sahal, we believe branding is more than visuals - it is the complete experience of how people see, feel, and remember your business.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

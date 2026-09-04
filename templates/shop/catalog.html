@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Products & Services - SAHAL{% endblock %}
+
+{% block content %}
+{% set carousel_id = 'catalog-hero-carousel' %}
+{% set hero_content %}<h1 class="font-heading text-4xl font-bold mb-2">Products & Services</h1><p class="text-blue-100">Browse our full range of printing, branding, and event solutions</p>{% endset %}
+{% include 'components/hero_carousel.html' %}
+
+<!-- Main Content -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid lg:grid-cols-4 gap-8">
+        <!-- Sidebar Categories -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sticky top-20">
+                <h3 class="font-subheading font-bold text-lg mb-4 px-2">Categories</h3>
+                <nav class="space-y-1">
+                    {% for cat in categories %}
+                    <a href="{{ url_for('catalog', category=cat.slug) }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-subheading font-medium transition
+                              {% if cat.slug == active_category %}bg-sahal-blue text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                        <i data-lucide="{{ cat.icon }}" class="w-4 h-4 shrink-0"></i>
+                        <span>{{ cat.name }}</span>
+                    </a>
+                    {% endfor %}
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="lg:col-span-3">
+            <!-- Top Bar -->
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-gray-600">Showing <span class="font-bold">{{ products|length }}</span> products</p>
+            </div>
+            
+            <!-- Products Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
+                {% for product in products %}
+                {% set cart_product = {'product_id': product.id, 'name': product.name, 'category_name': product.category.name, 'icon': product.category.icon or 'package', 'image_url': product.image_url or '', 'price': product.base_price|float if product.base_price else 0, 'selected_options': {}} %}
+                <article class="group relative aspect-[3/4] sm:aspect-square rounded-2xl overflow-hidden shadow-sm border border-gray-200 hover:shadow-xl transition block">
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="absolute inset-0 z-0" aria-label="View {{ product.name }}"></a>
+                    <!-- Media (fills the entire card) -->
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}"
+                         class="pointer-events-none absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    {% else %}
+                    <div class="pointer-events-none absolute inset-0 flex items-center justify-center bg-sahal-cream px-4">
+                        {% with show_wordmark=false, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Category badge -->
+                    <span class="pointer-events-none absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur text-sahal-navy text-[11px] rounded-full font-subheading font-semibold shadow-sm">
+                        {{ product.category.name }}
+                    </span>
+
+                    <!-- Bottom-right overlay: name, price & order -->
+                    <div class="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/85 via-black/40 to-transparent pt-10 pb-3 px-3">
+                        <h3 class="font-subheading font-bold text-white text-sm sm:text-base leading-tight mb-2 drop-shadow-sm line-clamp-2">{{ product.name }}</h3>
+                        <div class="flex items-end justify-between gap-2">
+                            {% if product.pricing_type == 'custom' or not product.base_price %}
+                            <span class="text-sahal-yellow font-bold text-sm sm:text-base">Custom Quote</span>
+                            {% else %}
+                            <span class="text-sahal-yellow font-bold text-sm sm:text-base">${{ '%.2f'|format(product.base_price) }}</span>
+                            {% endif %}
+                            <button type="button" data-add-to-cart data-product="{{ cart_product|tojson|forceescape }}" class="pointer-events-auto shrink-0 rounded-lg bg-sahal-yellow px-3 py-1.5 text-xs font-subheading font-bold text-sahal-navy transition hover:brightness-95 sm:text-sm">Add to Cart</button>
+                        </div>
+                    </div>
+                </article>
+                {% else %}
+                <p class="text-gray-500 col-span-full">No products found in this category yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Catalog Management - SAHAL Admin{% endblock %}
+
+{% block content %}
+<div class="p-6 md:p-8">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="font-heading text-3xl font-bold text-gray-900">Products & Services Catalog</h1>
+            <p class="text-gray-600 mt-1">Manage everything shown on the public <a href="/catalog" target="_blank" class="text-sahal-blue hover:underline">Products & Services</a> page. Drag category cards to reorder them.</p>
+        </div>
+        <a href="/dashboard/admin" class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm inline-flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Add Category -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
+        <form method="POST" action="{{ url_for('admin_catalog_category_new') }}" class="flex flex-wrap items-end gap-3"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-xs font-subheading font-semibold text-gray-500 uppercase tracking-wide mb-1">New Category Name</label>
+                <input type="text" name="name" required placeholder="e.g. Packaging & Industrial Printing"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+            </div>
+            <div class="w-48">
+                <label class="block text-xs font-subheading font-semibold text-gray-500 uppercase tracking-wide mb-1">Icon (Lucide name)</label>
+                <input type="text" name="icon" placeholder="package"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+            </div>
+            <button type="submit" class="bg-sahal-blue text-white px-4 py-2 rounded-lg font-subheading font-semibold text-sm hover:bg-sahal-navy transition inline-flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Add Category
+            </button>
+        </form>
+    </div>
+
+    <!-- Categories (draggable) -->
+    <div id="category-list" class="space-y-6">
+        {% for category in categories %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 category-card" draggable="true" data-id="{{ category.id }}">
+            <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 bg-gray-50 rounded-t-2xl cursor-move">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="grip-vertical" class="w-5 h-5 text-gray-400"></i>
+                    <i data-lucide="{{ category.icon or 'package' }}" class="w-5 h-5 text-sahal-blue"></i>
+                    <h2 class="font-subheading font-bold text-gray-900">{{ category.name }}</h2>
+                    <span class="text-xs text-gray-400">{{ category.services|length }} item(s)</span>
+                    {% if not category.is_active %}<span class="px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded-full">Hidden</span>{% endif %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ url_for('admin_catalog_product_new') }}?category_id={{ category.id }}"
+                       class="text-sm font-subheading font-semibold text-sahal-blue hover:text-sahal-navy inline-flex items-center gap-1">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Item
+                    </a>
+                    <form method="POST" action="{{ url_for('admin_catalog_category_delete', category_id=category.id) }}"
+                          onsubmit="return confirm('Delete this category and all its items?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="text-sm font-subheading font-semibold text-red-600 hover:text-red-800 inline-flex items-center gap-1">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Delete Category
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-white border-b border-gray-100">
+                        <tr>
+                            <th class="px-5 py-2 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Image</th>
+                            <th class="px-5 py-2 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Name</th>
+                            <th class="px-5 py-2 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Price</th>
+                            <th class="px-5 py-2 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Status</th>
+                            <th class="px-5 py-2 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for product in category.services %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-5 py-3">
+                                {% if product.image_url %}
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="w-12 h-12 rounded-lg object-cover border border-gray-200">
+                                {% else %}
+                                <div class="w-12 h-12 rounded-lg bg-sahal-cream flex items-center justify-center">
+                                    <i data-lucide="image" class="w-5 h-5 text-sahal-navy opacity-50"></i>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="px-5 py-3">
+                                <p class="font-subheading font-semibold text-gray-900">{{ product.name }}</p>
+                                <p class="text-xs text-gray-500 line-clamp-1">{{ product.description }}</p>
+                            </td>
+                            <td class="px-5 py-3 text-sm font-semibold text-sahal-blue whitespace-nowrap">
+                                {% if product.pricing_type == 'custom' or not product.base_price %}Custom Quote{% else %}${{ '%.2f'|format(product.base_price) }}{% endif %}
+                            </td>
+                            <td class="px-5 py-3">
+                                <span class="px-2 py-1 rounded-full text-xs font-subheading font-semibold {% if product.is_active %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-500{% endif %}">
+                                    {{ 'Active' if product.is_active else 'Hidden' }}
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-right whitespace-nowrap">
+                                <a href="{{ url_for('admin_catalog_product_edit', product_id=product.id) }}"
+                                   class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm mr-3">Edit</a>
+                                <form method="POST" action="{{ url_for('admin_catalog_product_delete', product_id=product.id) }}"
+                                      class="inline" onsubmit="return confirm('Delete this item?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="text-red-600 hover:text-red-800 font-subheading font-semibold text-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="px-5 py-6 text-center text-gray-400 text-sm">No items in this category yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center text-gray-500">No categories yet. Add one above to get started.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const list = document.getElementById('category-list');
+    if (!list) return;
+    let dragEl = null;
+
+    list.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('dragstart', () => { dragEl = card; card.classList.add('opacity-50'); });
+        card.addEventListener('dragend', () => { card.classList.remove('opacity-50'); persistOrder(); });
+        card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const after = getDragAfterElement(list, e.clientY);
+            if (!dragEl) return;
+            if (after == null) {
+                list.appendChild(dragEl);
+            } else {
+                list.insertBefore(dragEl, after);
+            }
+        });
+    });
+
+    function getDragAfterElement(container, y) {
+        const els = [...container.querySelectorAll('.category-card:not(.opacity-50)')];
+        return els.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset, element: child };
+            }
+            return closest;
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function persistOrder() {
+        const order = [...list.querySelectorAll('.category-card')].map(c => c.dataset.id);
+        fetch('{{ url_for("admin_catalog_category_reorder") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order })
+        });
+    }
+});
+</script>
+{% endblock %}

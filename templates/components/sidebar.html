@@ -1,0 +1,178 @@
+<!-- Dashboard Sidebar Component -->
+<aside class="hidden md:flex h-screen max-h-screen shrink-0 flex-col w-64 overflow-hidden bg-sahal-navy text-white" x-show="!sidebarOpen || !isMobile">
+    <!-- Logo Section -->
+    <div class="px-6 py-6 border-b border-white/10">
+        {% with on_dark=true %}{% include 'components/logo.html' with context %}{% endwith %}
+        <p class="text-xs text-blue-200 mt-2">Enterprise System</p>
+    </div>
+    
+    <!-- User Profile -->
+    <div class="px-6 py-4 border-b border-white/10">
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('my_profile') }}" class="w-10 h-10 overflow-hidden bg-sahal-yellow rounded-full flex items-center justify-center text-sahal-navy font-bold">
+                {% if user.avatar_url %}
+                <img src="{{ url_for('static', filename=user.avatar_url) }}" alt="" class="w-full h-full object-cover">
+                {% else %}
+                {{ user.initials or 'U' }}
+                {% endif %}
+            </a>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold truncate">{{ user.name or 'User' }}</p>
+                <p class="text-xs text-slate-400 truncate">{{ user.role or 'User' }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6 overflow-y-auto no-scrollbar space-y-2">
+        <!-- Dashboard Group -->
+        <div class="mb-6">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Dashboard</p>
+            <ul class="space-y-1">
+                <li>
+                    <a href="/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="grid" class="w-5 h-5"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Main Operations -->
+        <div class="mb-6">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Operations</p>
+            <ul class="space-y-1">
+                <li>
+                    <a href="{{ url_for('admin_talent_requests') if user.role == 'admin' else url_for('talent') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Talent</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/catalog" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li>
+                    {% if user.role == 'admin' %}
+                    <a href="/admin/orders" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                        <span>Orders</span>
+                    </a>
+                    {% elif user.role == 'staff' %}
+                    <a href="/jobs" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                        <span>Jobs</span>
+                    </a>
+                    {% else %}
+                    <a href="/my-orders" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                        <span>Pending Orders</span>
+                    </a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Documents (not available to staff) -->
+        {% if user.role in ['admin', 'client'] %}
+        <div class="mb-6">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Documents</p>
+            <ul class="space-y-1">
+                <li>
+                    <a href="/quotations" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                        <span>Quotations</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/invoices" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="receipt" class="w-5 h-5"></i>
+                        <span>Invoices</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/receipts" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="badge-check" class="w-5 h-5"></i>
+                        <span>Receipts</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        <!-- Communication -->
+        <div class="mb-6">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Communication</p>
+            <ul class="space-y-1">
+                <li>
+                    <a href="/chat" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition relative">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        <span>Messages</span>
+                        <span id="sidebar-unread-count" class="{% if not chat_unread_count %}hidden {% endif %}ml-auto bg-red-500 text-white text-xs rounded-full min-w-5 h-5 px-1 flex items-center justify-center">{{ chat_unread_count if chat_unread_count else '' }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Management (Admin Only) -->
+        {% if user.role == 'admin' %}
+        <div class="mb-6">
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">Administration</p>
+            <ul class="space-y-1">
+                <li>
+                    <a href="/admin/users" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="users-cog" class="w-5 h-5"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/catalog" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="package-search" class="w-5 h-5"></i>
+                        <span>Catalog Manager</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/talent" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="user-cog" class="w-5 h-5"></i>
+                        <span>Talent Manager</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/projects" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                        <span>Projects Manager</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/designs" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition"><i data-lucide="palette" class="w-5 h-5"></i><span>Designs Manager</span></a>
+                </li>
+                <li>
+                    <a href="/admin/events" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition"><i data-lucide="calendar-cog" class="w-5 h-5"></i><span>Events Manager</span></a>
+                </li>
+                <li>
+                    <a href="/admin/carousel" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition"><i data-lucide="panels-top-left" class="w-5 h-5"></i><span>Carousel Manager</span></a>
+                </li>
+                <li>
+                    <a href="{{ url_for('settings') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </nav>
+    
+    <!-- Footer -->
+    <div class="px-4 py-4 border-t border-slate-700">
+        <a href="{{ url_for('settings') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-100 hover:bg-slate-800 transition">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+            <span>Settings</span>
+        </a>
+    </div>
+</aside>
+
+<!-- Mobile Sidebar Overlay -->
+<div x-show="sidebarOpen && isMobile" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>

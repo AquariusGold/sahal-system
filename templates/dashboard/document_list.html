@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ document_label }} - SAHAL{% endblock %}
+
+{% block content %}
+<div class="p-6 md:p-8 max-w-6xl mx-auto">
+    <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <p class="text-xs font-subheading font-bold text-sahal-blue uppercase tracking-wide">{{ 'System Documents' if user.role == 'admin' else 'My Documents' }}</p>
+            <h1 class="font-heading text-3xl font-bold text-gray-900 mt-1">{{ document_label }}</h1>
+            <p class="text-gray-600 mt-2">{{ 'All generated ' if user.role == 'admin' else 'Your generated ' }}{{ document_label|lower }}.</p>
+        </div>
+        {% if user.role == 'admin' %}<a href="{{ url_for('admin_document_create', type=document_label[:-1]|lower) }}" class="bg-sahal-blue text-white px-4 py-2 rounded-lg font-subheading font-semibold text-sm hover:bg-sahal-navy inline-flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> Create {{ document_label[:-1] }}</a>{% elif user.role == 'client' %}<a href="{{ url_for('catalog') }}" class="bg-sahal-blue text-white px-4 py-2 rounded-lg font-subheading font-semibold text-sm hover:bg-sahal-navy inline-flex items-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> New Order</a>{% endif %}
+    </div>
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 mb-6"><p class="text-xs text-gray-500 uppercase font-subheading font-semibold">Total {{ document_label }}</p><p class="font-heading text-3xl {{ amount_class }} mt-2">{{ documents|length }}</p></div>
+    <div class="space-y-4">
+        {% for document in documents %}
+        <a href="{{ detail_path_prefix }}/{{ document.id }}" class="block bg-white border {{ border_class }} rounded-2xl p-5 sm:p-6 hover:shadow-md transition">
+            <div class="flex flex-wrap items-start justify-between gap-4"><div class="flex items-start gap-4"><div class="w-11 h-11 shrink-0 {{ icon_background }} {{ amount_class }} rounded-lg flex items-center justify-center"><i data-lucide="{{ icon }}" class="w-5 h-5"></i></div><div><p class="font-subheading font-bold text-gray-900">{{ document.reference }}</p><p class="text-sm text-gray-500 mt-1">Order #{{ document.order_id }} · {{ date_label }} {{ document.created_at.strftime('%b %d, %Y at %H:%M') }}</p><p class="text-sm text-gray-700 mt-3">{% if user.role == 'admin' %}{{ document.user.full_name }} · {% endif %}{% for item in document.order.items %}{{ item.quantity }}x {{ item.service.name }}{% if not loop.last %}, {% endif %}{% endfor %}</p></div></div><div class="text-right shrink-0"><p class="font-heading text-2xl font-bold {{ amount_class }}">${{ '%.2f'|format(document.total_price) }}</p><span class="inline-block mt-2 px-2 py-1 rounded-full text-xs font-subheading font-semibold {{ badge_class }}">{{ document.status|capitalize if document.status is defined else 'Delivered' }}</span></div></div>
+        </a>
+        {% else %}
+        <div class="bg-white border border-gray-200 rounded-2xl px-6 py-14 text-center"><i data-lucide="{{ icon }}" class="w-10 h-10 text-gray-300 mx-auto mb-3"></i><h2 class="font-subheading font-bold text-gray-900">No {{ document_label|lower }} yet</h2><p class="text-sm text-gray-500 mt-1">{{ empty_message }}</p></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

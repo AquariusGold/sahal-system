@@ -1,0 +1,429 @@
+[
+  {
+    "id": 3,
+    "title": "Portfolio Project 03",
+    "category": "Brand Identity",
+    "image": "images/portfolio/03-portfolio-project-03.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 4,
+    "title": "Portfolio Project 04",
+    "category": "Brand Identity",
+    "image": "images/portfolio/04-portfolio-project-04.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 5,
+    "title": "Portfolio Project 05",
+    "category": "Brand Identity",
+    "image": "images/portfolio/05-portfolio-project-05.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 6,
+    "title": "Portfolio Project 06",
+    "category": "Brand Identity",
+    "image": "images/portfolio/06-portfolio-project-06.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 7,
+    "title": "Portfolio Project 07",
+    "category": "Brand Identity",
+    "image": "images/portfolio/07-portfolio-project-07.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 8,
+    "title": "Portfolio Project 08",
+    "category": "Brand Identity",
+    "image": "images/portfolio/08-portfolio-project-08.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 9,
+    "title": "Portfolio Project 09",
+    "category": "Brand Identity",
+    "image": "images/portfolio/09-portfolio-project-09.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 10,
+    "title": "Portfolio Project 10",
+    "category": "Brand Identity",
+    "image": "images/portfolio/10-portfolio-project-10.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 11,
+    "title": "Portfolio Project 11",
+    "category": "Brand Identity",
+    "image": "images/portfolio/11-portfolio-project-11.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 12,
+    "title": "Portfolio Project 12",
+    "category": "Brand Identity",
+    "image": "images/portfolio/12-portfolio-project-12.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 14,
+    "title": "Portfolio Project 14",
+    "category": "Brand Identity",
+    "image": "images/portfolio/14-portfolio-project-14.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 15,
+    "title": "Portfolio Project 15",
+    "category": "Brand Identity",
+    "image": "images/portfolio/15-portfolio-project-15.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 16,
+    "title": "Portfolio Project 16",
+    "category": "Brand Identity",
+    "image": "images/portfolio/16-portfolio-project-16.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 17,
+    "title": "Portfolio Project 17",
+    "category": "Brand Identity",
+    "image": "images/portfolio/17-portfolio-project-17.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 18,
+    "title": "Portfolio Project 18",
+    "category": "Brand Identity",
+    "image": "images/portfolio/18-portfolio-project-18.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 19,
+    "title": "Portfolio Project 19",
+    "category": "Brand Identity",
+    "image": "images/portfolio/19-portfolio-project-19.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 21,
+    "title": "Portfolio Project 21",
+    "category": "Brand Identity",
+    "image": "images/portfolio/21-portfolio-project-21.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 22,
+    "title": "Portfolio Project 22",
+    "category": "Brand Identity",
+    "image": "images/portfolio/22-portfolio-project-22.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 23,
+    "title": "Portfolio Project 23",
+    "category": "Brand Identity",
+    "image": "images/portfolio/23-portfolio-project-23.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 24,
+    "title": "Portfolio Project 24",
+    "category": "Brand Identity",
+    "image": "images/portfolio/24-portfolio-project-24.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 25,
+    "title": "Portfolio Project 25",
+    "category": "Brand Identity",
+    "image": "images/portfolio/25-portfolio-project-25.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 26,
+    "title": "Portfolio Project 26",
+    "category": "Brand Identity",
+    "image": "images/portfolio/26-portfolio-project-26.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 27,
+    "title": "Portfolio Project 27",
+    "category": "Brand Identity",
+    "image": "images/portfolio/27-portfolio-project-27.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 28,
+    "title": "Portfolio Project 28",
+    "category": "Brand Identity",
+    "image": "images/portfolio/28-portfolio-project-28.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 29,
+    "title": "Portfolio Project 29",
+    "category": "Brand Identity",
+    "image": "images/portfolio/29-portfolio-project-29.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 30,
+    "title": "Portfolio Project 30",
+    "category": "Brand Identity",
+    "image": "images/portfolio/30-portfolio-project-30.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 31,
+    "title": "Portfolio Project 31",
+    "category": "Brand Identity",
+    "image": "images/portfolio/31-portfolio-project-31.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 32,
+    "title": "Portfolio Project 32",
+    "category": "Brand Identity",
+    "image": "images/portfolio/32-portfolio-project-32.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 33,
+    "title": "Portfolio Project 33",
+    "category": "Brand Identity",
+    "image": "images/portfolio/33-portfolio-project-33.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 34,
+    "title": "Portfolio Project 34",
+    "category": "Brand Identity",
+    "image": "images/portfolio/34-portfolio-project-34.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 35,
+    "title": "Portfolio Project 35",
+    "category": "Brand Identity",
+    "image": "images/portfolio/35-portfolio-project-35.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 36,
+    "title": "Portfolio Project 36",
+    "category": "Brand Identity",
+    "image": "images/portfolio/36-portfolio-project-36.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 37,
+    "title": "Portfolio Project 37",
+    "category": "Brand Identity",
+    "image": "images/portfolio/37-portfolio-project-37.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 38,
+    "title": "Portfolio Project 38",
+    "category": "Brand Identity",
+    "image": "images/portfolio/38-portfolio-project-38.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 40,
+    "title": "Home Services",
+    "category": "Brand Identity",
+    "image": "images/portfolio/40-home-services.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 41,
+    "title": "Home Services",
+    "category": "Brand Identity",
+    "image": "images/portfolio/41-home-services.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 42,
+    "title": "Home Services",
+    "category": "Brand Identity",
+    "image": "images/portfolio/42-home-services.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 43,
+    "title": "Portfolio Project 43",
+    "category": "Brand Identity",
+    "image": "images/portfolio/43-portfolio-project-43.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 44,
+    "title": "Portfolio Project 44",
+    "category": "Brand Identity",
+    "image": "images/portfolio/44-portfolio-project-44.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 45,
+    "title": "Portfolio Project 45",
+    "category": "Brand Identity",
+    "image": "images/portfolio/45-portfolio-project-45.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 46,
+    "title": "Portfolio Project 46",
+    "category": "Brand Identity",
+    "image": "images/portfolio/46-portfolio-project-46.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 47,
+    "title": "Portfolio Project 47",
+    "category": "Brand Identity",
+    "image": "images/portfolio/47-portfolio-project-47.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 48,
+    "title": "Portfolio Project 48",
+    "category": "Brand Identity",
+    "image": "images/portfolio/48-portfolio-project-48.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 49,
+    "title": "Portfolio Project 49",
+    "category": "Brand Identity",
+    "image": "images/portfolio/49-portfolio-project-49.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 50,
+    "title": "Portfolio Project 50",
+    "category": "Brand Identity",
+    "image": "images/portfolio/50-portfolio-project-50.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 51,
+    "title": "Logo Variations",
+    "category": "Brand Identity",
+    "image": "images/portfolio/51-logo-variations.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 52,
+    "title": "Portfolio Project 52",
+    "category": "Brand Identity",
+    "image": "images/portfolio/52-portfolio-project-52.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 53,
+    "title": "Portfolio Project 53",
+    "category": "Brand Identity",
+    "image": "images/portfolio/53-portfolio-project-53.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 54,
+    "title": "Logo Variations",
+    "category": "Brand Identity",
+    "image": "images/portfolio/54-logo-variations.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 55,
+    "title": "Portfolio Project 55",
+    "category": "Brand Identity",
+    "image": "images/portfolio/55-portfolio-project-55.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 56,
+    "title": "Portfolio Project 56",
+    "category": "Brand Identity",
+    "image": "images/portfolio/56-portfolio-project-56.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 57,
+    "title": "Portfolio Project 57",
+    "category": "Brand Identity",
+    "image": "images/portfolio/57-portfolio-project-57.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 58,
+    "title": "Portfolio Project 58",
+    "category": "Brand Identity",
+    "image": "images/portfolio/58-portfolio-project-58.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 59,
+    "title": "Portfolio Project 59",
+    "category": "Brand Identity",
+    "image": "images/portfolio/59-portfolio-project-59.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 60,
+    "title": "Portfolio Project 60",
+    "category": "Brand Identity",
+    "image": "images/portfolio/60-portfolio-project-60.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 61,
+    "title": "Portfolio Project 61",
+    "category": "Brand Identity",
+    "image": "images/portfolio/61-portfolio-project-61.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 63,
+    "title": "VIDEO PORTFOLIO",
+    "category": "Brand Identity",
+    "image": "images/portfolio/63-video-portfolio.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 64,
+    "title": "VIDEO PORTFOLIO",
+    "category": "Brand Identity",
+    "image": "images/portfolio/64-video-portfolio.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 65,
+    "title": "VIDEO PORTFOLIO",
+    "category": "Brand Identity",
+    "image": "images/portfolio/65-video-portfolio.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 66,
+    "title": "VIDEO PORTFOLIO",
+    "category": "Brand Identity",
+    "image": "images/portfolio/66-video-portfolio.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  },
+  {
+    "id": 67,
+    "title": "VIDEO PORTFOLIO",
+    "category": "Brand Identity",
+    "image": "images/portfolio/67-video-portfolio.webp",
+    "summary": "Portfolio work from the Sahal brand archive."
+  }
+]

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Cart - SAHAL{% endblock %}
+
+{% block content %}
+<section class="bg-sahal-navy py-10 text-white"><div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"><div><p class="text-xs font-subheading font-bold uppercase tracking-wide text-sahal-yellow">Order review</p><h1 class="mt-1 font-heading text-3xl font-bold">Your Cart</h1></div><a href="{{ url_for('catalog') }}" class="inline-flex items-center gap-2 rounded-lg border border-white/30 px-4 py-2 text-sm font-subheading font-bold transition hover:bg-white/10"><i data-lucide="arrow-left" class="h-4 w-4"></i> Continue browsing</a></div></section>
+
+<section class="min-h-[58vh] bg-gray-50 py-10"><div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"><div id="checkout-success" class="mb-6 hidden rounded-lg border border-green-200 bg-green-50 px-5 py-4 text-green-800"><div class="flex gap-3"><i data-lucide="circle-check" class="h-5 w-5 shrink-0"></i><div><p class="font-subheading font-bold">Order placed successfully</p><p id="checkout-success-copy" class="mt-1 text-sm"></p></div></div></div><div id="cart-empty" class="hidden rounded-lg border border-gray-200 bg-white p-12 text-center"><i data-lucide="shopping-cart" class="mx-auto mb-4 h-12 w-12 text-gray-300"></i><p class="font-subheading font-bold text-gray-800">Your cart is empty</p><p class="mt-2 text-sm text-gray-500">Browse the catalog to add products and services to your order.</p><a href="{{ url_for('catalog') }}" class="mt-6 inline-flex rounded-lg bg-sahal-blue px-5 py-3 text-sm font-subheading font-bold text-white hover:bg-sahal-navy">Browse Products</a></div><div id="cart-content" class="hidden grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px]"><div id="cart-items" class="space-y-4"></div><aside class="h-fit rounded-lg border border-gray-200 bg-white p-6"><h2 class="font-subheading text-lg font-bold text-gray-900">Order summary</h2><div class="mt-5 flex items-center justify-between border-t border-gray-100 pt-5"><span class="text-sm text-gray-600">Items</span><span id="cart-item-count" class="font-subheading font-bold text-gray-900"></span></div><div class="mt-3 flex items-end justify-between"><span class="font-subheading font-bold text-gray-900">Estimated total</span><span id="cart-total" class="font-heading text-2xl font-bold text-sahal-blue"></span></div><p class="mt-4 text-xs leading-5 text-gray-500">Custom-quote items are included in your request and priced after the team reviews the scope.</p><button id="checkout-button" type="button" class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sahal-yellow px-5 py-3.5 text-sm font-subheading font-bold text-sahal-navy transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"><i data-lucide="lock-keyhole" class="h-4 w-4"></i> Confirm &amp; Place Order</button><button id="clear-cart-button" type="button" class="mt-3 w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-subheading font-bold text-gray-700 transition hover:bg-gray-50">Clear Cart</button></aside></div></div></section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const empty = document.getElementById('cart-empty');
+    const content = document.getElementById('cart-content');
+    const items = document.getElementById('cart-items');
+    const escapeHtml = value => String(value || '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
+    const money = value => `$${Number(value || 0).toFixed(2)}`;
+
+    function renderCart() {
+        const cart = getCart();
+        empty.classList.toggle('hidden', cart.length > 0);
+        content.classList.toggle('hidden', cart.length === 0);
+        if (!cart.length) return;
+        items.innerHTML = cart.map(item => { const encodedKey = encodeURIComponent(item.key); const optionText = Object.entries(item.selected_options || {}).map(([name, value]) => `${escapeHtml(name)}: ${escapeHtml(value)}`).join(' · '); const image = item.image_url ? `<img src="${escapeHtml(item.image_url)}" alt="" class="h-full w-full object-cover">` : `<i data-lucide="${escapeHtml(item.icon || 'package')}" class="h-6 w-6 text-sahal-yellow"></i>`; return `<article class="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:items-center"><div class="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-sahal-navy">${image}</div><div class="min-w-0 flex-1"><p class="font-subheading font-bold text-gray-900">${escapeHtml(item.name)}</p><p class="mt-1 text-xs text-gray-500">${escapeHtml(item.category_name)}</p>${optionText ? `<p class="mt-2 text-xs text-gray-600">${optionText}</p>` : ''}</div><div class="flex items-center justify-between gap-4 sm:justify-end"><div class="flex items-center rounded-lg border border-gray-200"><button type="button" data-cart-action="decrease" data-cart-key="${encodedKey}" class="h-9 w-9 text-gray-600 hover:bg-gray-50" aria-label="Decrease quantity">-</button><span class="w-9 text-center text-sm font-subheading font-bold">${item.qty}</span><button type="button" data-cart-action="increase" data-cart-key="${encodedKey}" class="h-9 w-9 text-gray-600 hover:bg-gray-50" aria-label="Increase quantity">+</button></div><div class="w-20 text-right text-sm font-subheading font-bold text-sahal-blue">${Number(item.price) ? money(item.price * item.qty) : 'Quote'}</div><button type="button" data-cart-action="remove" data-cart-key="${encodedKey}" class="rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-600" aria-label="Remove item"><i data-lucide="trash-2" class="h-4 w-4"></i></button></div></article>`; }).join('');
+        document.getElementById('cart-item-count').textContent = `${cartCount()} item${cartCount() === 1 ? '' : 's'}`;
+        document.getElementById('cart-total').textContent = money(cartTotal());
+        items.querySelectorAll('[data-cart-action]').forEach(button => button.addEventListener('click', () => { const key = decodeURIComponent(button.dataset.cartKey); const action = button.dataset.cartAction; if (action === 'remove') removeFromCart(key); if (action === 'increase') updateQty(key, 1); if (action === 'decrease') updateQty(key, -1); renderCart(); }));
+        if (window.lucide) lucide.createIcons();
+    }
+
+    document.getElementById('clear-cart-button').addEventListener('click', () => { clearCart(); renderCart(); });
+    document.getElementById('checkout-button').addEventListener('click', async function () {
+        const button = this; const cart = getCart(); if (!cart.length) return;
+        button.disabled = true; button.innerHTML = '<i data-lucide="loader-circle" class="h-4 w-4 animate-spin"></i> Placing order'; if (window.lucide) lucide.createIcons();
+        try { const response = await fetch('/api/catalog/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: cart.map(item => ({ product_id: item.product_id, qty: item.qty, selected_options: item.selected_options || {} })) }) }); const data = await response.json(); if (response.status === 401 && data.login_url) { window.location.href = data.login_url; return; } if (!response.ok) throw new Error(data.error || 'Unable to place your order.'); clearCart(); renderCart(); document.getElementById('checkout-success-copy').textContent = `Order #${data.order_id} has been submitted. A quotation has been created for review.`; document.getElementById('checkout-success').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (error) { alert(error.message); } finally { button.disabled = false; button.innerHTML = '<i data-lucide="lock-keyhole" class="h-4 w-4"></i> Confirm &amp; Place Order'; if (window.lucide) lucide.createIcons(); } });
+    document.addEventListener('sahal:cart-updated', renderCart); renderCart();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "title": "Brand Launch Night",
+    "date": "Sep 12, 2026",
+    "location": "Nairobi, KE",
+    "summary": "Intricate Turbinate Network: Inside a cat’s nasal passages is a complex, labyrinth-like structure of thin bones covered in soft tissue called turbinates (or conchae). This maze forces incoming air into tight, swirling pathways rather than a straight line. Heavy dust particles hit the moist walls of the maze and get trapped immediately near the entrance.\r\n\r\nSticky Mucus & Microscopic Cilia: The nasal lining continuously secretes a thin layer of sticky mucus that coats dust and debris. Millions of tiny, hair-like projections called cilia beat in synchronized waves to sweep this dirty mucus toward the back of the throat, where the cat swallows it harmlessly without any dust settling in the airways.\r\n\r\nDual Airflow Pathways (Sniffing Mechanics): When a cat sniffs audibly, they alter their breathing dynamics. Instead of pulling air straight into the lungs, short, rapid sniffs create a side-channel airflow that directs scent molecules straight to the olfactory region at the top-back of the nasal cavity. The main pulmonary airway stays largely protected from high-velocity dust intake.\r\n\r\nVomeronasal (Jacobson's) Organ: Located just behind the upper front teeth with ducts opening inside the mouth and nose, this specialized organ allows cats to \"taste-smell\" chemical signals (pheromones) without needing to draw deep breaths of dusty ground air into their respiratory system.\r\n\r\nReflex Protective Measures: If fine dust passes through the turbinates and irritates the lining, a cat's hyper-sensitive nasal receptors trigger a sharp sneeze or snort to blast the debris out at high speed.",
+    "image": "uploads/events/20260903021317249019.webp"
+  },
+  {
+    "id": 2,
+    "title": "Design Workshop",
+    "date": "Oct 3, 2026",
+    "location": "Mombasa, KE"
+  },
+  {
+    "id": 3,
+    "title": "Client Showcase",
+    "date": "Nov 20, 2026",
+    "location": "Nairobi, KE"
+  }
+]

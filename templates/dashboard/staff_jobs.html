@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Jobs - SAHAL Staff{% endblock %}
+
+{% block content %}
+<div class="p-6 md:p-8">
+    <div class="mb-6">
+        <h1 class="font-heading text-3xl font-bold text-gray-900">Jobs</h1>
+        <p class="text-gray-600 mt-1">Orders assigned to you, including the client requirements needed to complete them.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {% for order in jobs %}
+        <a href="{{ url_for('staff_job_detail', order_id=order.id) }}" class="block bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-lg transition">
+            <div class="flex items-center justify-between gap-3 mb-4">
+                <span class="font-subheading font-bold text-gray-900">Order #{{ order.id }}</span>
+                <span class="px-2 py-1 rounded-full text-xs font-subheading font-semibold bg-blue-100 text-sahal-blue">{{ order.status_label }}</span>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Client: {{ order.user.full_name }}</p>
+            <div class="space-y-2 border-t border-gray-100 pt-3">
+                {% for item in order.items %}
+                <p class="text-sm text-gray-800 font-subheading font-semibold">{{ item.quantity }}x {{ item.service.name }}</p>
+                {% endfor %}
+            </div>
+            <p class="mt-4 text-sm font-subheading font-semibold text-sahal-blue">View job details</p>
+        </a>
+        {% else %}
+        <div class="col-span-full bg-white rounded-2xl border border-gray-200 p-10 text-center text-gray-500">No jobs have been assigned to you.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

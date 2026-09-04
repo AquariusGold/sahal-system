@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact - Sahal Branding Agency{% endblock %}
+
+{% block content %}
+<section class="sahal-page-hero py-16 text-white"><div class="max-w-7xl mx-auto flex flex-col gap-8 px-4 sm:px-6 lg:px-8 md:flex-row md:items-center md:justify-between"><div><p class="text-sm font-subheading font-bold uppercase tracking-wide text-sahal-yellow">Start a project</p><h1 class="mt-2 mb-3 font-heading text-4xl font-bold md:text-5xl">Tell us what you need to launch.</h1><p class="max-w-2xl text-blue-100">Share the context, scope, and timing behind your project. The studio will use your brief to recommend the right next step.</p></div>{% with show_wordmark=false, on_dark=true, size='lg', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}</div></section>
+
+<section class="bg-gray-50 py-16"><div class="max-w-6xl mx-auto grid gap-8 px-4 sm:px-6 lg:grid-cols-[.72fr_1.28fr] lg:px-8">
+    <aside class="sahal-card h-fit p-7 sm:p-8">{% with variant='vertical', size='md', alt='Sahal Branding Agency' %}{% include 'components/logo.html' %}{% endwith %}<div class="mt-8 space-y-6"><div class="flex gap-3"><i data-lucide="clipboard-list" class="h-5 w-5 shrink-0 text-sahal-blue"></i><div><p class="text-sm font-subheading font-bold text-gray-900">A useful first brief</p><p class="mt-1 text-sm leading-5 text-gray-600">Tell us what success looks like, who you need to reach, and what needs to be produced.</p></div></div><div class="flex gap-3"><i data-lucide="calendar-clock" class="h-5 w-5 shrink-0 text-sahal-blue"></i><div><p class="text-sm font-subheading font-bold text-gray-900">Clear planning</p><p class="mt-1 text-sm leading-5 text-gray-600">A target date and budget range help us suggest a realistic route to delivery.</p></div></div><div class="flex gap-3"><i data-lucide="message-square-text" class="h-5 w-5 shrink-0 text-sahal-blue"></i><div><p class="text-sm font-subheading font-bold text-gray-900">A considered response</p><p class="mt-1 text-sm leading-5 text-gray-600">Your enquiry is saved for the studio team to review before they contact you.</p></div></div></div></aside>
+
+    <div>{% if submitted %}<div class="sahal-card p-8 text-center sm:p-12"><div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-sahal-blue"><i data-lucide="check-circle-2" class="h-7 w-7"></i></div><h2 class="mt-5 font-subheading text-xl font-bold text-gray-900">Project brief received</h2><p class="mx-auto mt-2 max-w-md text-gray-600">Thank you. The Sahal studio has your enquiry and will review the scope before getting in touch.</p><a href="{{ url_for('sahal_home') }}" class="mt-7 inline-flex rounded-lg bg-sahal-blue px-5 py-3 text-sm font-subheading font-bold text-white transition hover:bg-sahal-navy">Return home</a></div>{% else %}
+        <form id="project-enquiry-form" method="POST" class="sahal-card space-y-5 p-5 sm:p-8"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div><p class="text-xs font-subheading font-bold uppercase tracking-wide text-sahal-blue">Project enquiry</p><h2 class="mt-2 font-heading text-3xl font-bold text-gray-950">Build your brief</h2><p class="mt-2 text-sm text-gray-600">Fields marked with <span class="text-red-600">*</span> are required.</p></div>
+            <fieldset class="border-t border-gray-200 pt-7"><legend class="px-0 text-base font-subheading font-bold text-gray-900">Your details</legend><div class="mt-5 grid gap-5 sm:grid-cols-2"><div><label for="full_name" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Full name <span class="text-red-600">*</span></label><input id="full_name" name="full_name" required value="{{ form_data.get('full_name', user.name if user.is_authenticated else '') }}" autocomplete="name" class="sahal-contact-input" placeholder="Your name"></div><div><label for="email" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Email address <span class="text-red-600">*</span></label><input id="email" name="email" type="email" required value="{{ form_data.get('email', user.email if user.is_authenticated else '') }}" autocomplete="email" class="sahal-contact-input" placeholder="you@company.com"></div><div><label for="phone_number" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Phone number</label><input id="phone_number" name="phone_number" type="tel" value="{{ form_data.get('phone_number', '') }}" autocomplete="tel" class="sahal-contact-input" placeholder="+254 700 000 000"></div><div><label for="contact_preference" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Preferred contact</label><select id="contact_preference" name="contact_preference" class="sahal-contact-input"><option value="Email">Email</option><option value="Phone" {% if form_data.get('contact_preference') == 'Phone' %}selected{% endif %}>Phone call</option><option value="WhatsApp" {% if form_data.get('contact_preference') == 'WhatsApp' %}selected{% endif %}>WhatsApp</option></select></div></div></fieldset>
+            <fieldset class="border-t border-gray-200 pt-7"><legend class="px-0 text-base font-subheading font-bold text-gray-900">Organization and project</legend><div class="mt-5 grid gap-5 sm:grid-cols-2"><div><label for="company_name" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Organization</label><input id="company_name" name="company_name" value="{{ form_data.get('company_name', '') }}" autocomplete="organization" class="sahal-contact-input" placeholder="Company or organization name"></div><div><label for="company_website" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Website or social link</label><input id="company_website" name="company_website" type="url" value="{{ form_data.get('company_website', '') }}" class="sahal-contact-input" placeholder="https://"></div><div class="sm:col-span-2"><label for="project_title" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Project name</label><input id="project_title" name="project_title" value="{{ form_data.get('project_title', '') }}" class="sahal-contact-input" placeholder="e.g. New restaurant brand launch"></div></div></fieldset>
+            <fieldset class="border-t border-gray-200 pt-7"><legend class="px-0 text-base font-subheading font-bold text-gray-900">What do you need? <span class="text-red-600">*</span></legend><p class="mt-1 text-sm text-gray-500">Select all services that apply.</p><div class="mt-5 grid gap-3 sm:grid-cols-2">{% for service in ['Brand strategy & identity', 'Logo & visual system', 'Print & packaging', 'Signage & large format', 'Campaign & social design', 'Event branding'] %}<label class="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-700 transition hover:border-sahal-blue hover:bg-blue-50"><input type="checkbox" name="services" value="{{ service }}" {% if service in form_data.getlist('services') %}checked{% endif %} class="h-4 w-4 rounded border-gray-300 text-sahal-blue focus:ring-sahal-blue"><span>{{ service }}</span></label>{% endfor %}</div></fieldset>
+            <fieldset class="border-t border-gray-200 pt-7"><legend class="px-0 text-base font-subheading font-bold text-gray-900">Project context</legend><div class="mt-5 grid gap-5"><div><label for="project_goal" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">What should this project achieve?</label><textarea id="project_goal" name="project_goal" rows="3" class="sahal-contact-input resize-y" placeholder="Describe the result you need.">{{ form_data.get('project_goal', '') }}</textarea></div><div><label for="target_audience" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Who is the audience?</label><textarea id="target_audience" name="target_audience" rows="2" class="sahal-contact-input resize-y" placeholder="Who needs to see, use, or respond to this work?">{{ form_data.get('target_audience', '') }}</textarea></div><div><label for="deliverables" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Known deliverables, sizes, quantities, or materials</label><textarea id="deliverables" name="deliverables" rows="2" class="sahal-contact-input resize-y" placeholder="For example: 500 brochures, shop sign, menu boards, social launch kit.">{{ form_data.get('deliverables', '') }}</textarea></div><div><label for="project_details" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Anything else the studio should know? <span class="text-red-600">*</span></label><textarea id="project_details" name="project_details" required rows="5" class="sahal-contact-input resize-y" placeholder="Add references, challenges, approvals, existing brand assets, or other important context.">{{ form_data.get('project_details', '') }}</textarea></div></div></fieldset>
+            <fieldset class="grid gap-5 border-t border-gray-200 pt-7 sm:grid-cols-2"><div><label for="timeline" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Ideal timeline</label><select id="timeline" name="timeline" class="sahal-contact-input"><option value="">Select a timeframe</option>{% for option in ['As soon as possible', 'Within 2 weeks', 'Within 1 month', '1-3 months', 'Planning ahead'] %}<option value="{{ option }}" {% if form_data.get('timeline') == option %}selected{% endif %}>{{ option }}</option>{% endfor %}</select></div><div><label for="budget_range" class="mb-2 block text-sm font-subheading font-semibold text-gray-700">Estimated budget</label><select id="budget_range" name="budget_range" class="sahal-contact-input"><option value="">Select a range</option>{% for option in ['Not decided yet', 'Under KES 25,000', 'KES 25,000 - 75,000', 'KES 75,000 - 150,000', 'Over KES 150,000'] %}<option value="{{ option }}" {% if form_data.get('budget_range') == option %}selected{% endif %}>{{ option }}</option>{% endfor %}</select></div></fieldset>
+            <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sahal-yellow px-5 py-3.5 font-subheading text-sm font-bold text-sahal-navy transition hover:brightness-95"><i data-lucide="send" class="h-4 w-4"></i> Send project enquiry</button>
+        </form>{% endif %}
+    </div>
+</div></section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sahal-contact-input { width: 100%; border: 1px solid #d1d5db; border-radius: .5rem; padding: .7rem .85rem; color: #111827; outline: none; transition: border-color .2s ease, box-shadow .2s ease; }
+    .sahal-contact-input:focus { border-color: #003399; box-shadow: 0 0 0 3px rgba(0, 51, 153, .16); }
+    .sahal-contact-step-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #e5e7eb; border-radius: .5rem; padding: 1rem 1.1rem; background: #fff; color: #111827; text-align: left; transition: border-color .2s ease, background .2s ease; }
+    .sahal-contact-step-toggle:hover, .sahal-contact-step-toggle[aria-expanded="true"] { border-color: rgba(0, 51, 153, .35); background: #f8faff; }
+    .sahal-contact-step-toggle .step-number { display: inline-flex; width: 1.7rem; height: 1.7rem; align-items: center; justify-content: center; border-radius: 999px; background: #e8efff; color: #003399; font: 700 .75rem Montserrat, sans-serif; }
+    .sahal-contact-step-toggle[aria-expanded="true"] .step-number { background: #003399; color: #fff; }
+    .sahal-contact-step-toggle .step-chevron { transition: transform .2s ease; }
+    .sahal-contact-step-toggle[aria-expanded="true"] .step-chevron { transform: rotate(180deg); }
+    #project-enquiry-form fieldset[hidden] { display: none; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('project-enquiry-form');
+    if (!form) return;
+    const sections = Array.from(form.querySelectorAll('fieldset'));
+    const toggles = [];
+
+    function setExpanded(index, expanded) {
+        const section = sections[index];
+        const toggle = toggles[index];
+        section.hidden = !expanded;
+        toggle.setAttribute('aria-expanded', String(expanded));
+    }
+
+    function openOnly(index) {
+        sections.forEach((section, sectionIndex) => setExpanded(sectionIndex, sectionIndex === index));
+        if (index > 0) toggles[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function isComplete(section) {
+        const requiredFields = Array.from(section.querySelectorAll('[required]'));
+        const requiredInputsComplete = requiredFields.every(field => field.value.trim() !== '');
+        const serviceSelected = !section.querySelector('[name="services"]') || section.querySelectorAll('[name="services"]:checked').length > 0;
+        return requiredInputsComplete && serviceSelected;
+    }
+
+    sections.forEach((section, index) => {
+        const legend = section.querySelector('legend');
+        const label = legend ? legend.textContent.trim() : `Section ${index + 1}`;
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'sahal-contact-step-toggle';
+        toggle.innerHTML = `<span class="flex items-center gap-3"><span class="step-number">${index + 1}</span><span class="font-subheading text-sm font-bold">${label}</span></span><i data-lucide="chevron-down" class="step-chevron h-5 w-5 text-sahal-blue"></i>`;
+        toggle.addEventListener('click', () => openOnly(index));
+        section.before(toggle);
+        toggles.push(toggle);
+
+        section.addEventListener('input', () => {
+            if (index < sections.length - 1 && isComplete(section)) window.setTimeout(() => {
+                if (isComplete(section) && !section.hidden) openOnly(index + 1);
+            }, 350);
+        });
+        section.addEventListener('change', () => {
+            if (index < sections.length - 1 && isComplete(section)) openOnly(index + 1);
+        });
+    });
+    openOnly(0);
+    lucide.createIcons();
+});
+</script>
+{% endblock %}

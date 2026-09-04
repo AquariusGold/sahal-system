@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - SAHAL{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-sahal-blue to-sahal-navy py-12 px-4">
+    <div class="max-w-lg mx-auto">
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">{% include 'components/logo.html' %}</div>
+                <p class="text-gray-600">Create your account to get started</p>
+            </div>
+
+            {% if error %}
+            <div class="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/signup" class="space-y-5"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="grid md:grid-cols-2 gap-5">
+                    <!-- First Name -->
+                    <div>
+                        <label for="first_name" class="block text-sm font-semibold text-gray-900 mb-2">First Name</label>
+                        <input type="text" id="first_name" name="first_name" placeholder="John" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="last_name" class="block text-sm font-semibold text-gray-900 mb-2">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" placeholder="Doe" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-900 mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                </div>
+
+                <!-- Phone Number -->
+                <div>
+                    <label for="phone_number" class="block text-sm font-semibold text-gray-900 mb-2">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" placeholder="e.g. +254 700 000 000" autocomplete="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-900 mb-2">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                    <p class="text-xs text-gray-600 mt-1">At least 8 characters with uppercase, lowercase, and numbers</p>
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label for="confirm_password" class="block text-sm font-semibold text-gray-900 mb-2">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                </div>
+
+                <!-- Terms -->
+                <label class="flex items-start">
+                    <input type="checkbox" name="terms" required class="w-4 h-4 text-sahal-blue rounded mt-1">
+                    <span class="ml-2 text-sm text-gray-700">I agree to the <a href="#" class="text-sahal-blue hover:text-sahal-navy">Terms of Service</a> and <a href="#" class="text-sahal-blue hover:text-sahal-navy">Privacy Policy</a></span>
+                </label>
+
+                <!-- Submit -->
+                <button type="submit" class="w-full bg-sahal-yellow text-sahal-navy py-3 rounded-lg hover:brightness-95 transition font-subheading font-bold text-lg">
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <p class="text-center text-gray-600 text-sm mt-8">
+                Already have an account?
+                <a href="/login" class="text-sahal-blue hover:text-sahal-navy font-bold">Sign in here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

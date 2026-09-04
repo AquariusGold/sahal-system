@@ -1,0 +1,10 @@
+<section class="rounded-xl border border-gray-200 bg-white p-5 sm:p-6">
+    <div class="mb-5 flex items-center gap-3"><div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-sahal-blue"><i data-lucide="contact-round" class="h-5 w-5"></i></div><div><h2 class="font-subheading text-lg font-bold text-gray-900">Client information</h2><p class="mt-0.5 text-sm text-gray-500">Contact and delivery details for this order.</p></div></div>
+    <dl class="grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Full name</dt><dd class="mt-1.5 font-subheading font-bold text-gray-900">{{ order.user.full_name }}</dd></div>
+        <div><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Phone number</dt><dd class="mt-1.5 flex items-center gap-2 text-sm text-gray-700"><i data-lucide="phone" class="h-4 w-4 text-sahal-blue"></i>{{ order.user.phone_number or 'Not provided' }}</dd></div>
+        <div><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Email address</dt><dd class="mt-1.5 flex items-center gap-2 break-all text-sm text-gray-700"><i data-lucide="mail" class="h-4 w-4 shrink-0 text-sahal-blue"></i>{{ order.user.email }}</dd></div>
+        <div><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Company / business</dt><dd class="mt-1.5 flex items-center gap-2 text-sm text-gray-700"><i data-lucide="building-2" class="h-4 w-4 shrink-0 text-sahal-blue"></i>{{ order.user.company_name or 'Not provided' }}</dd></div>
+        <div class="sm:col-span-2"><dt class="text-xs font-subheading font-bold uppercase tracking-wide text-gray-400">Billing / shipping address</dt><dd class="mt-1.5 flex items-start gap-2 text-sm leading-6 text-gray-700"><i data-lucide="map-pin" class="mt-1 h-4 w-4 shrink-0 text-sahal-blue"></i>{{ client_address or 'Not provided' }}</dd></div>
+    </dl>
+</section>

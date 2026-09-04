@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Sahal Branding Agency - Home{% endblock %}
+
+{% block content %}
+<section id="studio-hero" class="relative min-h-[720px] overflow-hidden bg-sahal-navy text-white">
+    <div class="absolute inset-0 sahal-hero-grid opacity-50"></div>
+    <div class="absolute -right-24 top-12 h-72 w-72 rounded-full border-[32px] border-sahal-yellow/20"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 lg:pt-24 lg:pb-14">
+        <div class="grid gap-12 lg:grid-cols-[.86fr_1.14fr] lg:items-center">
+            <div class="relative z-10 lg:pb-16">
+                <div class="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-sm font-subheading font-semibold text-blue-100 ring-1 ring-white/15">
+                    {% with show_wordmark=false, on_dark=true, size='sm', alt='Sahal emblem' %}{% include 'components/logo.html' %}{% endwith %}
+                    Sahal Branding Agency
+                </div>
+                <h1 class="font-heading mt-7 text-5xl leading-[.95] sm:text-6xl lg:text-7xl font-bold">Brands that<br><span class="text-sahal-yellow">stay in motion.</span></h1>
+                <p class="mt-7 max-w-xl text-lg leading-8 text-blue-100">We shape the visual systems, printed materials, and live moments that make your business immediately recognizable.</p>
+                <div class="mt-8 flex flex-wrap gap-4"><a href="/sahal/projects" class="inline-flex items-center gap-2 rounded-lg bg-sahal-yellow px-6 py-3 font-subheading font-bold text-sahal-navy shadow-lg shadow-black/20 hover:brightness-95 transition"><i data-lucide="arrow-up-right" class="w-4 h-4"></i> Explore Work</a><a href="/catalog" class="inline-flex items-center gap-2 rounded-lg border border-white/40 px-6 py-3 font-subheading font-semibold hover:bg-white hover:text-sahal-blue transition">Start a Project</a></div>
+            </div>
+            <div class="relative min-h-[460px] sm:min-h-[520px]" aria-label="Selected Sahal portfolio work">
+                {% for project in featured_projects %}
+                <a href="/sahal/projects" class="hero-project-card hero-project-{{ loop.index }} group absolute overflow-hidden rounded-lg border border-white/20 bg-sahal-blue shadow-2xl shadow-black/30" data-depth="{{ loop.index }}">
+                    {% if project.image %}<img src="{{ url_for('static', filename=project.image) }}" alt="{{ project.title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">{% else %}<div class="h-full w-full bg-sahal-blue"></div>{% endif %}
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-sahal-navy/90 to-transparent p-4"><p class="text-xs font-subheading font-bold uppercase tracking-wide text-sahal-yellow">{{ project.category }}</p><p class="mt-1 font-subheading text-sm font-bold text-white">{{ project.title }}</p></div>
+                </a>
+                {% endfor %}
+                <div class="absolute bottom-3 right-2 flex items-center gap-3 rounded-lg bg-white px-4 py-3 text-sahal-navy shadow-xl"><span class="flex h-9 w-9 items-center justify-center rounded-lg bg-sahal-cream"><i data-lucide="move-up-right" class="h-4 w-4"></i></span><span class="text-xs font-subheading font-bold uppercase tracking-wide">Move through<br>the work</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-10"><p class="text-sm font-subheading font-bold uppercase tracking-wide text-sahal-blue">Capabilities</p><h2 class="font-heading text-3xl md:text-4xl font-bold mt-2">Everything your brand needs to show up clearly.</h2><p class="text-gray-600 mt-3">From first logo concepts to launch-day event collateral, the studio keeps every touchpoint aligned.</p></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">{% for s in [{'icon': 'palette', 'title': 'Branding & Identity', 'text': 'Logos, colors, typography, and usage rules.'}, {'icon': 'printer', 'title': 'Print & Signage', 'text': 'Business cards, flyers, banners, boards, and displays.'}, {'icon': 'image', 'title': 'Graphic Design', 'text': 'Campaign visuals, social assets, profiles, and packaging.'}, {'icon': 'calendar-days', 'title': 'Event Branding', 'text': 'Launch kits, stage visuals, rollups, badges, and wayfinding.'}] %}<div class="sahal-card p-6"><div class="w-12 h-12 mb-5 rounded-lg bg-sahal-blue flex items-center justify-center"><i data-lucide="{{ s.icon }}" class="w-7 h-7 text-sahal-yellow"></i></div><h3 class="font-subheading font-bold text-gray-900">{{ s.title }}</h3><p class="text-sm text-gray-600 mt-3">{{ s.text }}</p></div>{% endfor %}</div>
+    </div>
+</section>
+
+<section class="py-16 bg-gray-50"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-3 gap-6">{% for item in [{'k': 'Strategy', 'v': 'Clear direction before design begins.'}, {'k': 'Production', 'v': 'Print-ready files and practical material choices.'}, {'k': 'Consistency', 'v': 'A unified identity across digital, print, and spaces.'}] %}<div class="bg-white border border-gray-200 rounded-lg p-7"><p class="font-heading text-3xl font-bold text-sahal-blue">{{ item.k }}</p><p class="text-gray-600 mt-2">{{ item.v }}</p></div>{% endfor %}</div></section>
+<section class="py-16 bg-sahal-cream"><div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"><h2 class="font-heading text-3xl font-bold text-sahal-navy mb-4">Ready to build your brand?</h2><p class="text-gray-700 mb-8">Tell us what you need launched, printed, refreshed, or prepared for an event.</p><a href="/sahal/contact" class="inline-block bg-sahal-blue text-white px-8 py-3 rounded-lg font-subheading font-bold hover:bg-sahal-navy transition">Contact Us</a></div></section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const hero = document.getElementById('studio-hero');
+    const cards = hero.querySelectorAll('[data-depth]');
+    hero.addEventListener('pointermove', function (event) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const x = (event.clientX / window.innerWidth - 0.5) * 2;
+        const y = (event.clientY / window.innerHeight - 0.5) * 2;
+        cards.forEach(function (card) { const depth = Number(card.dataset.depth); card.style.transform = `translate(${x * depth * 7}px, ${y * depth * 6}px)`; });
+    });
+    hero.addEventListener('pointerleave', function () { cards.forEach(function (card) { card.style.transform = ''; }); });
+});
+</script>
+{% endblock %}

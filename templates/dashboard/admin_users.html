@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}User Management - SAHAL Admin{% endblock %}
+
+{% block content %}
+<div class="p-6 md:p-8">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="font-heading text-3xl font-bold text-gray-900">User Management</h1>
+            <p class="text-gray-600 mt-1">Assign Admin or Staff roles to registered accounts. Everyone else stays a Normal User.</p>
+        </div>
+        <a href="/dashboard/admin" class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm inline-flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Name</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Email</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Current Role</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Joined</th>
+                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Assign Role</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for u in users %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-sahal-blue text-white flex items-center justify-center text-xs font-bold shrink-0">{{ u.initials }}</div>
+                            <span class="font-subheading font-semibold text-gray-900">{{ u.name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 text-sm">{{ u.email }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs font-subheading font-semibold
+                            {% if u.role == 'admin' %}bg-sahal-cream text-sahal-navy
+                            {% elif u.role == 'staff' %}bg-blue-100 text-sahal-blue
+                            {% else %}bg-gray-100 text-gray-600{% endif %}">
+                            {{ u.role_label }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-500 text-sm">{{ u.created_at.strftime('%b %d, %Y') if u.created_at else '-' }}</td>
+                    <td class="px-6 py-4">
+                        <form method="POST" action="{{ url_for('admin_update_user_role', user_id=u.id) }}" class="flex items-center gap-2"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <select name="role" class="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sahal-blue">
+                                {% for r in roles %}
+                                <option value="{{ r }}" {% if r == u.role %}selected{% endif %}>{{ role_labels[r] }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="text-sm font-subheading font-semibold text-white bg-sahal-blue px-3 py-1.5 rounded-lg hover:bg-sahal-navy transition">
+                                Save
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Create {{ document_label }} - SAHAL Admin{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-5xl p-5 sm:p-6 md:p-8">
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-sahal-blue/10 pb-6"><div><p class="text-xs font-subheading font-bold uppercase tracking-[0.16em] text-sahal-blue">System Documents</p><h1 class="mt-2 font-heading text-3xl font-bold text-sahal-navy">Create {{ document_label }}</h1><p class="mt-2 text-gray-600">Prepare the document, then review it before saving.</p></div><a href="{{ url_for(document_type + 's') if document_type != 'quotation' else url_for('quotations') }}" class="text-sm font-subheading font-semibold text-sahal-blue">Back to {{ document_label }}s</a></div>
+    <form method="POST" action="{{ url_for('admin_document_preview') }}" class="space-y-8 border border-sahal-blue/10 bg-white p-5 shadow-lg shadow-sahal-navy/5 sm:p-7"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="document_type" value="{{ document_type }}">
+        {% if document_type in ['invoice', 'receipt'] %}<section class="border border-sahal-blue/15 bg-sahal-blue/5 p-5"><h2 class="font-subheading text-lg font-bold text-sahal-navy">Import from Quotation</h2><p class="mt-1 text-sm text-gray-600">Search by client, quotation number, or company to pre-fill this document.</p><div class="mt-4 flex flex-col gap-3 sm:flex-row"><input id="quotation-search" list="quotation-options" placeholder="Search quotations" class="flex-1 rounded-lg bg-white px-4 py-3 shadow-sm"><datalist id="quotation-options">{% for quotation in quotations %}<option value="{{ quotation.reference }}" label="{{ quotation.user.full_name }}{% if quotation.user.company_name %} - {{ quotation.user.company_name }}{% endif %}" data-id="{{ quotation.id }}"></option>{% endfor %}</datalist><button type="button" id="import-quotation" class="inline-flex items-center justify-center gap-2 rounded-lg bg-sahal-blue px-5 py-3 text-sm font-subheading font-bold text-white"><i data-lucide="file-input" class="h-4 w-4"></i> Import</button></div><p id="import-status" class="mt-2 text-xs text-gray-500"></p></section>{% endif %}
+        <section><h2 class="font-subheading text-lg font-bold text-sahal-navy">Client Details</h2><div class="mt-4 grid gap-4 sm:grid-cols-2"><input required name="full_name" value="{{ prefill.get('full_name', '') }}" placeholder="Full name" class="rounded-lg bg-gray-50 px-4 py-3"><input required type="email" name="email" value="{{ prefill.get('email', '') }}" placeholder="Email address" class="rounded-lg bg-gray-50 px-4 py-3"><input name="phone_number" value="{{ prefill.get('phone_number', '') }}" placeholder="Phone number" class="rounded-lg bg-gray-50 px-4 py-3"><select name="account_type" class="rounded-lg bg-gray-50 px-4 py-3"><option value="personal">Personal billing</option><option value="business" {% if prefill.get('company_name') %}selected{% endif %}>Business billing</option></select><input name="company_name" value="{{ prefill.get('company_name', '') }}" placeholder="Company name" class="rounded-lg bg-gray-50 px-4 py-3"><input name="company_website" placeholder="Company website" class="rounded-lg bg-gray-50 px-4 py-3"></div><textarea name="billing_address" rows="2" placeholder="Billing address" class="mt-4 w-full rounded-lg bg-gray-50 px-4 py-3">{{ prefill.get('billing_address', '') }}</textarea></section>
+        <section class="border-t border-sahal-blue/10 pt-7"><h2 class="font-subheading text-lg font-bold text-sahal-navy">Order Details</h2><div id="line-items" class="mt-4 space-y-3"><div class="grid gap-3 sm:grid-cols-[1fr_100px_130px]"><select name="service_id" required class="rounded-lg bg-gray-50 px-4 py-3">{% for service in services %}<option value="{{ service.id }}">{{ service.name }}</option>{% endfor %}</select><input name="quantity" required type="number" min="1" value="1" class="rounded-lg bg-gray-50 px-4 py-3"><input name="unit_price" required type="number" step="0.01" min="0" placeholder="Unit price" class="rounded-lg bg-gray-50 px-4 py-3"></div></div><button type="button" id="add-line-item" class="mt-3 text-sm font-subheading font-bold text-sahal-blue">+ Add line item</button><div class="mt-5 grid gap-4 sm:grid-cols-2"><input name="tax_rate" type="number" step="0.01" min="0" value="0" placeholder="Tax rate (%)" class="rounded-lg bg-gray-50 px-4 py-3"><input name="discount" type="number" step="0.01" min="0" value="0" placeholder="Discount amount" class="rounded-lg bg-gray-50 px-4 py-3"></div></section>
+        <div class="flex justify-end border-t border-sahal-blue/10 pt-6"><button class="inline-flex items-center gap-2 rounded-lg bg-sahal-blue px-6 py-3 font-subheading text-sm font-bold text-white"><i data-lucide="eye" class="h-4 w-4"></i> Generate &amp; Preview</button></div>
+    </form>
+</div>
+<template id="line-item-template"><div class="grid gap-3 sm:grid-cols-[1fr_100px_130px_40px]"><select name="service_id" required class="rounded-lg bg-gray-50 px-4 py-3">{% for service in services %}<option value="{{ service.id }}">{{ service.name }}</option>{% endfor %}</select><input name="quantity" required type="number" min="1" value="1" class="rounded-lg bg-gray-50 px-4 py-3"><input name="unit_price" required type="number" step="0.01" min="0" placeholder="Unit price" class="rounded-lg bg-gray-50 px-4 py-3"><button type="button" class="remove-line text-red-600" aria-label="Remove line item"><i data-lucide="x" class="h-4 w-4"></i></button></div></template>
+{% endblock %}
+{% block extra_js %}
+<script>
+const items = document.getElementById('line-items');
+const template = document.getElementById('line-item-template');
+document.getElementById('add-line-item').onclick = function () { items.append(template.content.cloneNode(true)); };
+document.addEventListener('click', function (event) { if (event.target.closest('.remove-line')) event.target.closest('.remove-line').parentElement.remove(); });
+const importButton = document.getElementById('import-quotation');
+if (importButton) {
+    importButton.onclick = async function () {
+        const input = document.getElementById('quotation-search');
+        const option = Array.from(document.querySelectorAll('#quotation-options option')).find(function (entry) { return entry.value === input.value; });
+        const status = document.getElementById('import-status');
+        if (!option) { status.textContent = 'Select a quotation from the list.'; return; }
+        const data = await fetch(`/admin/documents/quotations/${option.dataset.id}/import`).then(function (response) { return response.json(); });
+        Object.entries(data.client).forEach(function ([name, value]) { const field = document.querySelector(`[name="${name}"]`); if (field) field.value = value; });
+        items.replaceChildren();
+        data.items.forEach(function (item, index) {
+            const fragment = template.content.cloneNode(true);
+            const row = fragment.querySelector('div');
+            if (index === 0) { row.className = 'grid gap-3 sm:grid-cols-[1fr_100px_130px]'; row.querySelector('.remove-line').remove(); }
+            row.querySelector('[name="service_id"]').value = item.service_id;
+            row.querySelector('[name="quantity"]').value = item.quantity;
+            row.querySelector('[name="unit_price"]').value = item.unit_price;
+            items.append(fragment);
+        });
+        document.querySelector('[name="tax_rate"]').value = data.tax_rate;
+        document.querySelector('[name="discount"]').value = data.discount;
+        status.textContent = `Imported ${data.reference}. Review and adjust before previewing.`;
+    };
+}
+</script>
+{% endblock %}
