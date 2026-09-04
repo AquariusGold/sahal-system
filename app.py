@@ -2403,7 +2403,9 @@ def update_job_status(order_id):
     else:
         return redirect(url_for('staff_job_detail', order_id=order.id))
     db.session.commit()
-    if action == 'fulfill':
+    if action == 'accept':
+        _notify_user(order.user, f'Order #{order.id} has been accepted', 'Your order has been accepted', 'Your assigned SAHAL specialist has accepted the work and is now preparing your order.', 'client_order_detail', order_id=order.id)
+    elif action == 'fulfill':
         _notify_user(order.user, f'Order #{order.id} has been completed', 'Your order is complete', 'Our team has completed your order. It will be marked as delivered when dispatch is confirmed.', 'client_order_detail', order_id=order.id)
         if invoice:
             _notify_user(order.user, f'Invoice {invoice.reference} is ready', 'Your invoice is ready', 'An invoice has been created for your completed order.', 'invoice_detail', invoice_id=invoice.id)
@@ -2438,6 +2440,9 @@ def client_receive_order(order_id):
         order.status = 'received'
         order.received_at = datetime.utcnow()
         db.session.commit()
+        _notify_user(order.user, f'Order #{order.id} delivery confirmed', 'Delivery confirmed', 'We recorded your delivery confirmation. Thank you for choosing SAHAL.', 'client_order_detail', order_id=order.id)
+        if order.assigned_staff:
+            _notify_user(order.assigned_staff, f'Order #{order.id} delivery confirmed', 'Client delivery confirmation', 'The client confirmed receipt of the completed order.', 'staff_job_detail', order_id=order.id)
     return redirect(url_for('client_order_detail', order_id=order.id))
 
 # ===========================
