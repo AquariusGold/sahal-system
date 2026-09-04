@@ -1641,9 +1641,46 @@ def staff_dashboard():
 @login_required
 @role_required('admin')
 def admin_users():
-    """List all users and allow role assignment"""
-    users = User.query.order_by(User.created_at.desc()).all()
-    return render_template('dashboard/admin_users.html', is_dashboard=True, users=users, roles=ROLES, role_labels=ROLE_LABELS)
+    """List users with searchable, filterable, server-side pagination."""
+    search = _clean_public_input(request.args.get('search'), 120) or ''
+    selected_role = request.args.get('role', '').strip()
+    selected_status = request.args.get('status', '').strip()
+    selected_account_type = request.args.get('account_type', '').strip()
+    per_page = request.args.get('per_page', 50, type=int)
+    if per_page not in (50, 100, 200):
+        per_page = 50
+    page = max(1, request.args.get('page', 1, type=int))
+
+    query = User.query
+    if search:
+        pattern = f'%{search}%'
+        query = query.filter(or_(
+            User.full_name.ilike(pattern),
+            User.email.ilike(pattern),
+            User.phone_number.ilike(pattern),
+            User.company_name.ilike(pattern),
+        ))
+    if selected_role in ROLES:
+        query = query.filter(User.role == selected_role)
+    else:
+        selected_role = ''
+    if selected_account_type in ('personal', 'business'):
+        query = query.filter(User.account_type == selected_account_type)
+    else:
+        selected_account_type = ''
+    if selected_status == 'active':
+        query = query.filter(User.is_active.is_(True))
+    elif selected_status == 'inactive':
+        query = query.filter(User.is_active.is_(False))
+    else:
+        selected_status = ''
+
+    pagination = query.order_by(User.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    return render_template(
+        'dashboard/admin_users.html', is_dashboard=True, users=pagination.items, pagination=pagination,
+        per_page=per_page, search=search, selected_role=selected_role, selected_status=selected_status,
+        selected_account_type=selected_account_type, roles=ROLES, role_labels=ROLE_LABELS,
+    )
 
 @app.route('/admin/users/<int:user_id>/role', methods=['POST'])
 @login_required

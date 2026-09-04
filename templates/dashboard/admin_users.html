@@ -3,69 +3,90 @@
 {% block title %}User Management - SAHAL Admin{% endblock %}
 
 {% block content %}
-<div class="p-6 md:p-8">
-    <!-- Header -->
-    <div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+<div class="p-5 sm:p-6 md:p-8">
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-            <h1 class="font-heading text-3xl font-bold text-gray-900">User Management</h1>
-            <p class="text-gray-600 mt-1">Assign Admin or Staff roles to registered accounts. Everyone else stays a Normal User.</p>
+            <p class="text-xs font-subheading font-bold uppercase tracking-[0.16em] text-sahal-blue">Administration</p>
+            <h1 class="mt-1 font-heading text-3xl font-bold text-gray-900">User Management</h1>
+            <p class="mt-1 text-gray-600">Search accounts, review account state, and manage team access.</p>
         </div>
-        <a href="/dashboard/admin" class="text-sahal-blue hover:text-sahal-navy font-subheading font-semibold text-sm inline-flex items-center gap-1">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
-        </a>
+        <a href="{{ url_for('admin_dashboard') }}" class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-subheading font-semibold text-sahal-blue transition hover:bg-blue-50"><i data-lucide="arrow-left" class="h-4 w-4"></i> Back to Dashboard</a>
     </div>
 
-    <!-- Users Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-        <table class="w-full text-left">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Name</th>
-                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Email</th>
-                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Current Role</th>
-                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Joined</th>
-                    <th class="px-6 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Assign Role</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                {% for u in users %}
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-full bg-sahal-blue text-white flex items-center justify-center text-xs font-bold shrink-0">{{ u.initials }}</div>
-                            <span class="font-subheading font-semibold text-gray-900">{{ u.name }}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-gray-600 text-sm">{{ u.email }}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded-full text-xs font-subheading font-semibold
-                            {% if u.role == 'admin' %}bg-sahal-cream text-sahal-navy
-                            {% elif u.role == 'staff' %}bg-blue-100 text-sahal-blue
-                            {% else %}bg-gray-100 text-gray-600{% endif %}">
-                            {{ u.role_label }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-gray-500 text-sm">{{ u.created_at.strftime('%b %d, %Y') if u.created_at else '-' }}</td>
-                    <td class="px-6 py-4">
-                        <form method="POST" action="{{ url_for('admin_update_user_role', user_id=u.id) }}" class="flex items-center gap-2"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <select name="role" class="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sahal-blue">
-                                {% for r in roles %}
-                                <option value="{{ r }}" {% if r == u.role %}selected{% endif %}>{{ role_labels[r] }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="submit" class="text-sm font-subheading font-semibold text-white bg-sahal-blue px-3 py-1.5 rounded-lg hover:bg-sahal-navy transition">
-                                Save
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">No users found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <section class="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-5">
+            <div>
+                <h2 class="font-subheading font-bold text-gray-900">All accounts</h2>
+                <p class="mt-1 text-sm text-gray-500">Role changes apply immediately and revalidate the user session.</p>
+            </div>
+            <p class="text-sm text-gray-500">{{ pagination.total }} account{{ '' if pagination.total == 1 else 's' }}</p>
+        </div>
+
+        <form method="GET" class="grid gap-3 border-b border-gray-100 p-5 xl:grid-cols-[minmax(0,1fr)_145px_145px_145px_100px_auto_auto]">
+            <div class="relative">
+                <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"></i>
+                <input type="search" name="search" value="{{ search }}" placeholder="Name, email, phone, or company" class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm text-gray-800 placeholder:text-gray-400 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+            </div>
+            <select name="role" aria-label="Filter by role" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+                <option value="">All roles</option>
+                {% for role in roles %}<option value="{{ role }}" {% if selected_role == role %}selected{% endif %}>{{ role_labels[role] }}</option>{% endfor %}
+            </select>
+            <select name="account_type" aria-label="Filter by account type" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+                <option value="">All account types</option>
+                <option value="personal" {% if selected_account_type == 'personal' %}selected{% endif %}>Personal</option>
+                <option value="business" {% if selected_account_type == 'business' %}selected{% endif %}>Business</option>
+            </select>
+            <select name="status" aria-label="Filter by account status" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+                <option value="">All states</option>
+                <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Inactive</option>
+            </select>
+            <select name="per_page" aria-label="Users per page" class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">
+                {% for size in [50, 100, 200] %}<option value="{{ size }}" {% if per_page == size %}selected{% endif %}>{{ size }} rows</option>{% endfor %}
+            </select>
+            <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-sahal-blue px-4 py-2 text-sm font-subheading font-bold text-white transition hover:bg-sahal-navy"><i data-lucide="sliders-horizontal" class="h-4 w-4"></i> Apply</button>
+            <a href="{{ url_for('admin_users') }}" class="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-subheading font-semibold text-gray-600 transition hover:bg-gray-100">Reset</a>
+        </form>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-[980px] w-full text-left">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-5 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">User</th>
+                        <th class="px-5 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Contact</th>
+                        <th class="px-5 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Account</th>
+                        <th class="px-5 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Role</th>
+                        <th class="px-5 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Joined</th>
+                        <th class="px-5 py-3 text-xs font-subheading font-semibold uppercase tracking-wide text-gray-500">Assign Role</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for u in users %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-5 py-4"><div class="flex items-center gap-3"><div class="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-sahal-blue text-xs font-bold text-white">{% if u.avatar_url %}<img src="{{ url_for('static', filename=u.avatar_url) }}" alt="" class="h-full w-full object-cover">{% else %}{{ u.initials }}{% endif %}</div><div class="min-w-0"><p class="font-subheading font-semibold text-gray-900">{{ u.full_name }}</p>{% if u.company_name %}<p class="mt-0.5 truncate text-xs text-gray-500">{{ u.company_name }}</p>{% endif %}</div></div></td>
+                        <td class="px-5 py-4"><p class="text-sm text-gray-700">{{ u.email }}</p>{% if u.phone_number %}<p class="mt-1 text-xs text-gray-500">{{ u.phone_number }}</p>{% endif %}</td>
+                        <td class="px-5 py-4"><p class="text-sm text-gray-700">{{ u.account_type|capitalize }}</p><span class="mt-1 inline-flex rounded-full px-2 py-0.5 text-xs font-subheading font-semibold {% if u.is_active %}bg-green-100 text-green-700{% else %}bg-gray-200 text-gray-700{% endif %}">{{ 'Active' if u.is_active else 'Inactive' }}</span></td>
+                        <td class="px-5 py-4"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-subheading font-semibold {% if u.role == 'admin' %}bg-sahal-cream text-sahal-navy{% elif u.role == 'staff' %}bg-blue-100 text-sahal-blue{% else %}bg-gray-100 text-gray-600{% endif %}">{{ u.role_label }}</span></td>
+                        <td class="px-5 py-4 text-sm text-gray-500">{{ u.created_at.strftime('%b %d, %Y') if u.created_at else '-' }}</td>
+                        <td class="px-5 py-4"><form method="POST" action="{{ url_for('admin_update_user_role', user_id=u.id) }}" class="flex items-center gap-2"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><select name="role" class="rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm focus:border-sahal-blue focus:outline-none focus:ring-2 focus:ring-sahal-blue/20">{% for role in roles %}<option value="{{ role }}" {% if role == u.role %}selected{% endif %}>{{ role_labels[role] }}</option>{% endfor %}</select><button type="submit" class="rounded-lg bg-sahal-blue px-3 py-1.5 text-sm font-subheading font-semibold text-white transition hover:bg-sahal-navy">Save</button></form></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="px-6 py-10 text-center text-gray-500">No users match the current filters.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if pagination.pages > 1 %}
+        <div class="flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 px-5 py-4">
+            <p class="text-sm text-gray-500">Showing {{ ((pagination.page - 1) * per_page) + 1 }}-{{ ((pagination.page - 1) * per_page) + users|length }} of {{ pagination.total }} accounts</p>
+            <nav class="flex items-center gap-1" aria-label="Users pagination">
+                {% if pagination.has_prev %}<a href="{{ url_for('admin_users', page=pagination.prev_num, per_page=per_page, search=search, role=selected_role, account_type=selected_account_type, status=selected_status) }}" class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Previous</a>{% endif %}
+                {% for page_number in pagination.iter_pages() %}{% if page_number %}<a href="{{ url_for('admin_users', page=page_number, per_page=per_page, search=search, role=selected_role, account_type=selected_account_type, status=selected_status) }}" class="min-w-9 rounded-lg px-3 py-2 text-center text-sm font-subheading font-bold {% if page_number == pagination.page %}bg-sahal-blue text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">{{ page_number }}</a>{% else %}<span class="px-1 text-gray-400">...</span>{% endif %}{% endfor %}
+                {% if pagination.has_next %}<a href="{{ url_for('admin_users', page=pagination.next_num, per_page=per_page, search=search, role=selected_role, account_type=selected_account_type, status=selected_status) }}" class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Next</a>{% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </section>
 </div>
 {% endblock %}
