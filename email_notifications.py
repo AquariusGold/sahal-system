@@ -3,6 +3,7 @@
 import logging
 import smtplib
 import ssl
+import certifi
 from concurrent.futures import ThreadPoolExecutor
 from email.message import EmailMessage
 
@@ -53,13 +54,13 @@ def _deliver_email(config, recipient, subject, heading, message, action_url, act
         if config['MAIL_USE_SSL']:
             smtp = smtplib.SMTP_SSL(
                 config['MAIL_SERVER'], config['MAIL_PORT'], timeout=15,
-                context=ssl.create_default_context(),
+                context=ssl.create_default_context(cafile=certifi.where()),
             )
         else:
             smtp = smtplib.SMTP(config['MAIL_SERVER'], config['MAIL_PORT'], timeout=15)
         with smtp:
             if config['MAIL_USE_TLS'] and not config['MAIL_USE_SSL']:
-                smtp.starttls(context=ssl.create_default_context())
+                smtp.starttls(context=ssl.create_default_context(cafile=certifi.where()))
             if config['MAIL_USERNAME']:
                 smtp.login(config['MAIL_USERNAME'], config['MAIL_PASSWORD'])
             smtp.send_message(email)
