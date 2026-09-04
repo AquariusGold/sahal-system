@@ -1423,7 +1423,7 @@ SAHAL_CONTACT_SERVICES = (
     'Signage & large format', 'Campaign & social design', 'Event branding',
 )
 SAHAL_CONTACT_TIMELINES = ('As soon as possible', 'Within 2 weeks', 'Within 1 month', '1-3 months', 'Planning ahead')
-SAHAL_CONTACT_BUDGET_RANGES = ('Not decided yet', 'Under KES 25,000', 'KES 25,000 - 75,000', 'KES 75,000 - 150,000', 'Over KES 150,000')
+SAHAL_CONTACT_BUDGET_RANGES = ('Not decided yet', 'Under $200', '$200 - $600', '$600 - $1,200', 'Over $1,200')
 SAHAL_CONTACT_PREFERENCES = ('Email', 'Phone', 'WhatsApp')
 
 
