@@ -56,10 +56,9 @@ limiter = Limiter(
     default_limits=['200 per hour'],
     storage_uri=app.config['RATELIMIT_STORAGE_URI'],
 )
-# The Windows/Werkzeug development server does not provide a reliable Socket.IO
-# WebSocket worker. Long polling keeps socket events real-time locally; enable
-# WebSocket transport in the production server configuration.
-socketio = SocketIO(app, async_mode='threading', transports=['polling'])
+# Local development keeps the browser on polling, while production accepts WebSocket
+# upgrades and retains polling as a compatibility fallback.
+socketio = SocketIO(app, async_mode='threading')
 
 ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
 IMAGE_FORMATS_BY_EXTENSION = {

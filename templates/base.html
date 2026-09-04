@@ -167,9 +167,12 @@
                 badge.textContent = totalUnread > 99 ? '99+' : totalUnread;
                 badge.classList.toggle('hidden', totalUnread === 0);
             };
-            // Werkzeug on local Windows development does not reliably support Socket.IO WebSocket upgrades.
-            // Engine.IO polling still delivers server-pushed chat events without repeated failed upgrades.
+            // Keep polling local to Werkzeug; production uses WebSockets with a polling fallback.
+            {% if config.DEBUG %}
             window.sahalChatSocket = io({ transports: ['polling'], upgrade: false });
+            {% else %}
+            window.sahalChatSocket = io({ transports: ['websocket', 'polling'], upgrade: true });
+            {% endif %}
             window.sahalChatSocket.on('chat:unread-count', payload => updateUnreadBadge(payload.total_unread || 0));
         })();
     </script>
