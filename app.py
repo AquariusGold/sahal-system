@@ -1471,8 +1471,8 @@ def sahal_contact():
             and (not cleaned['budget_range'] or cleaned['budget_range'] in SAHAL_CONTACT_BUDGET_RANGES)
             and (not cleaned['contact_preference'] or cleaned['contact_preference'] in SAHAL_CONTACT_PREFERENCES)
         )
-        if any(value is None for value in cleaned.values()) or not phone_is_valid or not allowed_values or not _valid_website(cleaned['company_website']):
-            flash('One or more details are invalid. Check the phone number, selections, field lengths, and website address.')
+        if any(value is None for value in cleaned.values()) or not cleaned['phone_number'] or not phone_is_valid or not allowed_values or not _valid_website(cleaned['company_website']):
+            flash('Provide a valid phone number and check the selected values, field lengths, and website address.')
             return _render_sahal_contact(form_data=request.form)
 
         db.session.add(SahalInquiry(
