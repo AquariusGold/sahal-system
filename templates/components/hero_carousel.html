@@ -1,4 +1,4 @@
-<section id="{{ carousel_id }}" class="hero-carousel relative h-[33vh] min-h-[250px] max-h-[350px] overflow-hidden bg-sahal-navy">
+<section id="{{ carousel_id }}" class="hero-carousel relative h-[41.25vh] min-h-[313px] max-h-[438px] overflow-hidden bg-sahal-navy">
     {% for slide in hero_slides %}
     <div class="hero-carousel-slide absolute inset-0 {% if loop.first %}opacity-100{% else %}opacity-0{% endif %} transition-opacity duration-700 ease-out" data-slide>
         {% if slide.image %}<img src="{{ url_for('static', filename=slide.image) }}" alt="{{ slide.title }}" class="h-full w-full object-cover">{% else %}<div class="h-full w-full bg-sahal-navy"></div>{% endif %}
