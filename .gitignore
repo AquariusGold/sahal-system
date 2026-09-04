@@ -60,7 +60,7 @@ instance/
 deploy/
 
 # Uploads
-uploads/
+/uploads/
 static/uploads/talent_requests/
 temp/
 tmp/
