@@ -44,6 +44,17 @@ class Config:
     RATELIMIT_STORAGE_URI = os.environ.get('RATELIMIT_STORAGE_URI', 'memory://')
     AUTO_SCHEMA_MANAGEMENT = False
 
+    # Outbound email. Leave MAIL_SERVER empty to disable delivery safely in local environments.
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', '')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in {'1', 'true', 'yes', 'on'}
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'false').lower() in {'1', 'true', 'yes', 'on'}
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME', '')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or MAIL_USERNAME
+    MAIL_FROM_NAME = os.environ.get('MAIL_FROM_NAME', 'SAHAL Branding Agency')
+    APP_BASE_URL = os.environ.get('APP_BASE_URL', 'https://sahalbrandingagency.com').rstrip('/')
+
     # Admins are created explicitly with the `flask create-admin` command.
 
 

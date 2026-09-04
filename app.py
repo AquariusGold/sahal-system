@@ -28,6 +28,7 @@ from reportlab.platypus import Paragraph
 from dotenv import load_dotenv
 load_dotenv()
 from config import current_config, init_app as init_config
+from email_notifications import send_notification_email
 from extensions import db
 from sqlalchemy import inspect, text, or_, case, func
 from flask_socketio import SocketIO, join_room
@@ -117,6 +118,16 @@ def _valid_website(value):
         return True
     parsed = urlparse(value)
     return parsed.scheme in {'http', 'https'} and bool(parsed.netloc)
+
+
+def _notify_user(user, subject, heading, message, endpoint=None, **view_args):
+    """Queue a transactional notification for a user after a successful state change."""
+    if not user or not user.email:
+        return False
+    action_url = None
+    if endpoint:
+        action_url = f"{app.config['APP_BASE_URL']}{url_for(endpoint, **view_args)}"
+    return send_notification_email(user.email, subject, heading, message, action_url=action_url)
 
 
 @app.before_request
@@ -1005,6 +1016,7 @@ def settings():
             else:
                 current_user.set_password(new_password)
                 db.session.commit()
+                _notify_user(current_user, 'Your SAHAL password was changed', 'Password changed', 'Your password was changed successfully. If you did not make this change, contact SAHAL support immediately.', 'settings')
                 flash('Your password has been changed successfully.')
             return redirect(url_for('settings'))
 
@@ -1358,13 +1370,16 @@ def api_catalog_checkout():
             subtotal=subtotal,
             selected_options=json.dumps(selected_options),
         ))
-    db.session.add(Quotation(
+    quotation = Quotation(
         order_id=order.id,
         user_id=current_user.id,
         reference=f"QT-{datetime.now().strftime('%Y%m%d')}-{order.id:05d}",
         total_price=total,
-    ))
+    )
+    db.session.add(quotation)
     db.session.commit()
+    _notify_user(current_user, f'Order #{order.id} placed', 'Your order has been placed', 'We received your order and will update you when a staff member is assigned.', 'client_order_detail', order_id=order.id)
+    _notify_user(current_user, f'Quotation {quotation.reference} is ready', 'Your quotation is ready', 'A quotation has been created for your new order.', 'quotation_detail', quotation_id=quotation.id)
     return jsonify({'success': True, 'order_id': order.id})
 
 
@@ -1502,6 +1517,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
             session['user'] = user.to_session_dict()
+            _notify_user(user, 'Welcome to SAHAL Branding Agency', 'Welcome to SAHAL', 'Your account is ready. You can now browse services, place orders, and follow their progress from your dashboard.', 'dashboard')
             return redirect(url_for('index'))
 
     return render_template('auth/signup.html', is_dashboard=False, error=error)
@@ -2291,6 +2307,8 @@ def admin_assign_order(order_id):
         order.status = 'assigned'
         order.assigned_at = datetime.utcnow()
         db.session.commit()
+        _notify_user(order.user, f'Order #{order.id} has been assigned', 'Your order is now in progress', f'{staff_member.full_name} has been assigned to your order.', 'client_order_detail', order_id=order.id)
+        _notify_user(staff_member, f'New assigned order #{order.id}', 'You have a new assigned order', 'Please review the order details and accept the job when you are ready to begin.', 'staff_job_detail', order_id=order.id)
     return redirect(url_for('admin_order_detail', order_id=order.id))
 
 
@@ -2303,14 +2321,14 @@ def admin_dispatch_order(order_id):
     if order.status == 'fulfilled':
         order.status = 'dispatched'
         order.dispatched_at = datetime.utcnow()
+        receipt = None
         if not order.receipt:
-            db.session.add(Receipt(
-                order_id=order.id,
-                user_id=order.user_id,
-                reference=f"RCT-{datetime.now().strftime('%Y%m%d')}-{order.id:05d}",
-                total_price=order.total_price,
-            ))
+            receipt = Receipt(order_id=order.id, user_id=order.user_id, reference=f"RCT-{datetime.now().strftime('%Y%m%d')}-{order.id:05d}", total_price=order.total_price)
+            db.session.add(receipt)
         db.session.commit()
+        _notify_user(order.user, f'Order #{order.id} has been delivered', 'Your order has been delivered', 'Your order has been marked as delivered. Thank you for choosing SAHAL.', 'client_order_detail', order_id=order.id)
+        if receipt:
+            _notify_user(order.user, f'Receipt {receipt.reference} is ready', 'Your receipt is ready', 'A receipt has been created for your delivered order.', 'receipt_detail', receipt_id=receipt.id)
     return redirect(url_for('admin_order_detail', order_id=order.id))
 
 
@@ -2372,6 +2390,7 @@ def update_job_status(order_id):
         Order.status != 'cancelled',
     ).first_or_404()
     action = request.form.get('action')
+    invoice = None
     if action == 'accept' and order.status == 'assigned':
         order.status = 'accepted'
         order.accepted_at = datetime.utcnow()
@@ -2379,15 +2398,15 @@ def update_job_status(order_id):
         order.status = 'fulfilled'
         order.fulfilled_at = datetime.utcnow()
         if not order.invoice:
-            db.session.add(Invoice(
-                order_id=order.id,
-                user_id=order.user_id,
-                reference=f"INV-{datetime.now().strftime('%Y%m%d')}-{order.id:05d}",
-                total_price=order.total_price,
-            ))
+            invoice = Invoice(order_id=order.id, user_id=order.user_id, reference=f"INV-{datetime.now().strftime('%Y%m%d')}-{order.id:05d}", total_price=order.total_price)
+            db.session.add(invoice)
     else:
         return redirect(url_for('staff_job_detail', order_id=order.id))
     db.session.commit()
+    if action == 'fulfill':
+        _notify_user(order.user, f'Order #{order.id} has been completed', 'Your order is complete', 'Our team has completed your order. It will be marked as delivered when dispatch is confirmed.', 'client_order_detail', order_id=order.id)
+        if invoice:
+            _notify_user(order.user, f'Invoice {invoice.reference} is ready', 'Your invoice is ready', 'An invoice has been created for your completed order.', 'invoice_detail', invoice_id=invoice.id)
     return redirect(url_for('staff_job_detail', order_id=order.id))
 
 
@@ -2623,6 +2642,8 @@ def _publish_chat_message(message, sender, recipient):
     )
     _emit_chat_unread_count(recipient.id)
     _emit_chat_contacts_changed((sender.id, recipient.id))
+    preview = ' '.join(message.body.split())[:160]
+    _notify_user(recipient, f'New message from {sender.full_name}', 'You have a new chat message', f'{sender.full_name} sent you a message: {preview}', 'chat')
 
 
 @socketio.on('connect')
@@ -3059,6 +3080,7 @@ def admin_document_save():
     document = document_model(order_id=order.id, user_id=user.id, reference=f'{prefix}-{now.strftime("%Y%m%d")}-{order.id:05d}', total_price=Decimal(draft['total']))
     db.session.add(document)
     db.session.commit()
+    _notify_user(user, f'{DOCUMENT_LABELS[document_type]} {document.reference} is ready', f'Your {DOCUMENT_LABELS[document_type].lower()} is ready', f'A new {DOCUMENT_LABELS[document_type].lower()} has been created for you.', f'{document_type}_detail', **{f'{document_type}_id': document.id})
     flash(f'{DOCUMENT_LABELS[document_type]} created successfully.', 'success')
     return redirect(f'/{document_type}s/{document.id}' if document_type != 'quotation' else f'/quotations/{document.id}')
 
