@@ -1417,19 +1417,43 @@ def sahal_about():
     """Sahal Branding Agency Portfolio - About"""
     return render_template('sahal/about.html', is_dashboard=False, is_sahal_site=True)
 
+SAHAL_INQUIRY_STATUSES = ('new', 'in_review', 'contacted', 'quoted', 'closed')
+SAHAL_CONTACT_SERVICES = (
+    'Brand strategy & identity', 'Logo & visual system', 'Print & packaging',
+    'Signage & large format', 'Campaign & social design', 'Event branding',
+)
+SAHAL_CONTACT_TIMELINES = ('As soon as possible', 'Within 2 weeks', 'Within 1 month', '1-3 months', 'Planning ahead')
+SAHAL_CONTACT_BUDGET_RANGES = ('Not decided yet', 'Under KES 25,000', 'KES 25,000 - 75,000', 'KES 75,000 - 150,000', 'Over KES 150,000')
+SAHAL_CONTACT_PREFERENCES = ('Email', 'Phone', 'WhatsApp')
+
+
+def _render_sahal_contact(*, submitted=False, form_data=None):
+    return render_template(
+        'sahal/contact.html', is_dashboard=False, is_sahal_site=True, submitted=submitted,
+        form_data=form_data if form_data is not None else request.form, service_options=SAHAL_CONTACT_SERVICES,
+        timeline_options=SAHAL_CONTACT_TIMELINES, budget_options=SAHAL_CONTACT_BUDGET_RANGES,
+        contact_preferences=SAHAL_CONTACT_PREFERENCES,
+    )
+
+
 @app.route('/sahal/contact', methods=['GET', 'POST'])
 @limiter.limit('5 per hour', methods=['POST'])
 def sahal_contact():
-    """Capture detailed project enquiries for the Sahal Branding Agency."""
+    """Capture validated project enquiries for the Sahal Branding Agency."""
     if request.method == 'POST':
         full_name = _clean_public_input(request.form.get('full_name'), 120)
         email = _clean_public_input(request.form.get('email'), 120)
         email = email.lower() if email else None
-        services = [_clean_public_input(service, 80) for service in request.form.getlist('services')[:10]]
+        submitted_services = request.form.getlist('services')
+        services = []
+        for service in submitted_services[:len(SAHAL_CONTACT_SERVICES)]:
+            cleaned_service = _clean_public_input(service, 80)
+            if cleaned_service and cleaned_service not in services:
+                services.append(cleaned_service)
         project_details = _clean_public_input(request.form.get('project_details'), 5000, multiline=True)
-        if not full_name or not _valid_email(email) or not services or any(service is None for service in services) or not project_details:
-            flash('Please complete your name, email, service interests, and project details.')
-            return render_template('sahal/contact.html', is_dashboard=False, is_sahal_site=True, submitted=False, form_data=request.form)
+        if not full_name or not _valid_email(email) or not services or not project_details or any(service not in SAHAL_CONTACT_SERVICES for service in services):
+            flash('Please provide your name, a valid email, selected service interests, and project details.')
+            return _render_sahal_contact(form_data=request.form)
 
         optional_fields = {
             'phone_number': (40, False), 'company_name': (120, False), 'company_website': (255, False),
@@ -1441,29 +1465,28 @@ def sahal_contact():
             field: _clean_public_input(request.form.get(field), max_length, multiline=multiline)
             for field, (max_length, multiline) in optional_fields.items()
         }
-        if any(value is None for value in cleaned.values()) or not _valid_website(cleaned['company_website']):
-            flash('One or more details are invalid or too long. Use a full http:// or https:// website address.')
-            return render_template('sahal/contact.html', is_dashboard=False, is_sahal_site=True, submitted=False, form_data=request.form)
+        phone_is_valid = not cleaned['phone_number'] or bool(re.fullmatch(r'\+?[0-9][0-9().\s-]{6,38}', cleaned['phone_number']))
+        allowed_values = (
+            (not cleaned['timeline'] or cleaned['timeline'] in SAHAL_CONTACT_TIMELINES)
+            and (not cleaned['budget_range'] or cleaned['budget_range'] in SAHAL_CONTACT_BUDGET_RANGES)
+            and (not cleaned['contact_preference'] or cleaned['contact_preference'] in SAHAL_CONTACT_PREFERENCES)
+        )
+        if any(value is None for value in cleaned.values()) or not phone_is_valid or not allowed_values or not _valid_website(cleaned['company_website']):
+            flash('One or more details are invalid. Check the phone number, selections, field lengths, and website address.')
+            return _render_sahal_contact(form_data=request.form)
 
         db.session.add(SahalInquiry(
-            full_name=full_name,
-            email=email,
-            phone_number=cleaned['phone_number'] or None,
-            company_name=cleaned['company_name'] or None,
-            company_website=cleaned['company_website'] or None,
-            services=', '.join(services),
-            project_title=cleaned['project_title'] or None,
-            project_goal=cleaned['project_goal'] or None,
-            target_audience=cleaned['target_audience'] or None,
-            deliverables=cleaned['deliverables'] or None,
-            timeline=cleaned['timeline'] or None,
-            budget_range=cleaned['budget_range'] or None,
-            contact_preference=cleaned['contact_preference'] or None,
-            project_details=project_details,
+            full_name=full_name, email=email, phone_number=cleaned['phone_number'] or None,
+            company_name=cleaned['company_name'] or None, company_website=cleaned['company_website'] or None,
+            services=', '.join(services), project_title=cleaned['project_title'] or None,
+            project_goal=cleaned['project_goal'] or None, target_audience=cleaned['target_audience'] or None,
+            deliverables=cleaned['deliverables'] or None, timeline=cleaned['timeline'] or None,
+            budget_range=cleaned['budget_range'] or None, contact_preference=cleaned['contact_preference'] or None,
+            project_details=project_details, status='new',
         ))
         db.session.commit()
         return redirect(url_for('sahal_contact', submitted='1'))
-    return render_template('sahal/contact.html', is_dashboard=False, is_sahal_site=True, submitted=request.args.get('submitted') == '1', form_data=request.form)
+    return _render_sahal_contact(submitted=request.args.get('submitted') == '1')
 
 # ===========================
 # AUTHENTICATION ROUTES
@@ -1697,6 +1720,60 @@ def admin_update_user_role(user_id):
             if session.get('user', {}).get('id') == target.id:
                 session['user'] = target.to_session_dict()
     return redirect(url_for('admin_users'))
+
+
+@app.route('/admin/inquiries')
+@login_required
+@role_required('admin')
+def admin_inquiries():
+    """Review, filter, and progress enquiries from the Sahal contact form."""
+    search = _clean_public_input(request.args.get('search'), 120) or ''
+    selected_status = request.args.get('status', '').strip()
+    per_page = request.args.get('per_page', 50, type=int)
+    if per_page not in (50, 100, 200):
+        per_page = 50
+    page = max(1, request.args.get('page', 1, type=int))
+
+    query = SahalInquiry.query
+    if search:
+        pattern = f'%{search}%'
+        query = query.filter(or_(
+            SahalInquiry.full_name.ilike(pattern), SahalInquiry.email.ilike(pattern),
+            SahalInquiry.company_name.ilike(pattern), SahalInquiry.project_title.ilike(pattern),
+            SahalInquiry.services.ilike(pattern),
+        ))
+    if selected_status in SAHAL_INQUIRY_STATUSES:
+        query = query.filter(SahalInquiry.status == selected_status)
+    else:
+        selected_status = ''
+    pagination = query.order_by(SahalInquiry.created_at.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    status_counts = {
+        status: SahalInquiry.query.filter(SahalInquiry.status == status).count()
+        for status in SAHAL_INQUIRY_STATUSES
+    }
+    return render_template(
+        'dashboard/admin_inquiries.html', is_dashboard=True, inquiries=pagination.items,
+        pagination=pagination, per_page=per_page, search=search, selected_status=selected_status,
+        statuses=SAHAL_INQUIRY_STATUSES, status_counts=status_counts,
+    )
+
+
+@app.route('/admin/inquiries/<int:inquiry_id>/update', methods=['POST'])
+@login_required
+@role_required('admin')
+def admin_inquiry_update(inquiry_id):
+    """Persist an admin-owned enquiry status and internal response notes."""
+    inquiry = SahalInquiry.query.get_or_404(inquiry_id)
+    status = request.form.get('status', '')
+    notes = _clean_public_input(request.form.get('admin_notes'), 5000, multiline=True)
+    if status not in SAHAL_INQUIRY_STATUSES or notes is None:
+        flash('Use a valid enquiry status and keep internal notes under 5,000 characters.', 'error')
+    else:
+        inquiry.status = status
+        inquiry.admin_notes = notes or None
+        db.session.commit()
+        flash(f'Inquiry #{inquiry.id} updated.', 'success')
+    return redirect(url_for('admin_inquiries'))
 
 # ===========================
 # ADMIN: PRODUCTS & SERVICES CATALOG MANAGEMENT

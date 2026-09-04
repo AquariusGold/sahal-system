@@ -304,7 +304,7 @@ class Conversation(db.Model):
     participant_one_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     participant_two_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     participant_one = db.relationship('User', foreign_keys=[participant_one_id])
     participant_two = db.relationship('User', foreign_keys=[participant_two_id])
@@ -354,7 +354,10 @@ class SahalInquiry(db.Model):
     budget_range = db.Column(db.String(80))
     contact_preference = db.Column(db.String(30))
     project_details = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='new', index=True)
+    admin_notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 TALENT_CATEGORIES = ('Actors', 'Models', 'Influencers', 'Musicians', 'Dancers')
@@ -428,7 +431,7 @@ class TalentBookingRequest(db.Model):
         nullable=False, default='new', index=True
     )
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     client_user = db.relationship('User', foreign_keys=[client_user_id])
     assigned_staff = db.relationship('User', foreign_keys=[assigned_staff_id])
