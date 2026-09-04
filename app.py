@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from config import current_config, init_app as init_config
 from extensions import db
-from sqlalchemy import inspect, text, or_
+from sqlalchemy import inspect, text, or_, case, func
 from flask_socketio import SocketIO, join_room
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from flask.cli import with_appcontext
@@ -1535,6 +1535,7 @@ def dashboard():
 @role_required('admin')
 def admin_dashboard():
     """Admin dashboard"""
+    completed_delivery_statuses = ('fulfilled', 'dispatched', 'received')
     delivered_revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_price), 0)).filter(
         Order.status.in_(['dispatched', 'received'])
     ).scalar()
@@ -1556,7 +1557,28 @@ def admin_dashboard():
     activity_feed.extend({'timestamp': user.created_at, 'icon': 'user-plus', 'tone': 'blue', 'title': 'New user registered', 'description': f'{user.full_name} created a {user.role} account'} for user in User.query.order_by(User.created_at.desc()).limit(5))
     activity_feed = sorted((item for item in activity_feed if item['timestamp']), key=lambda item: item['timestamp'], reverse=True)[:5]
     
-    return render_template('dashboard/admin.html', is_dashboard=True, stats=stats, activity=activity_feed)
+    staff_performers = (
+        db.session.query(
+            User,
+            func.coalesce(
+                func.sum(case((Order.status.in_(completed_delivery_statuses), 1), else_=0)),
+                0,
+            ).label('completed_orders'),
+        )
+        .outerjoin(Order, Order.assigned_staff_id == User.id)
+        .filter(User.role == 'staff', User.is_active.is_(True))
+        .group_by(User.id)
+        .order_by(db.desc('completed_orders'), User.full_name.asc())
+        .all()
+    )
+
+    return render_template(
+        'dashboard/admin.html',
+        is_dashboard=True,
+        stats=stats,
+        activity=activity_feed,
+        staff_performers=staff_performers,
+    )
 
 @app.route('/dashboard/user')
 @login_required
